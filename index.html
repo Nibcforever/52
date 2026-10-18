@@ -114,6 +114,18 @@
     .c-big .pre { font-size: 13px; font-weight: 700; color: var(--sub); margin-right: 3px; }
     .c-sub { font-size: 13px; color: var(--sub); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 18px; }
 
+    .c-cmp { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+    .c-cmp .ch { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 6px; }
+    .c-cmp .ch span { font-size: 12px; font-weight: 800; color: var(--sub); white-space: nowrap; }
+    .c-cmp .diff { width: auto; padding: 3px 9px; font-size: 12px; }
+    .c-cmp .br { display: grid; grid-template-columns: 38px 1fr auto; align-items: center; gap: 6px; margin-top: 4px; }
+    .c-cmp .br span { font-size: 11px; font-weight: 700; color: var(--faint); white-space: nowrap; }
+    .c-cmp .br .tk { height: 7px; border-radius: 99px; background: #eef1ea; overflow: hidden; }
+    .c-cmp .br .tk i { display: block; height: 100%; border-radius: 99px; background: color-mix(in srgb, var(--c) 35%, white); }
+    .c-cmp .br.now .tk i { background: var(--c); }
+    .c-cmp .br b { font-size: 13px; font-weight: 800; min-width: 20px; text-align: right; font-variant-numeric: tabular-nums; }
+    .c-cmp .br.now b { color: var(--ink); }
+    .c-cmp .br.last b { color: var(--sub); }
     .week { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
     .wd { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .wd i {
@@ -694,15 +706,11 @@
 
     <div class="sec-title">
       <h2>나의 활동</h2>
-      <span>점은 이번 주 월~금이에요</span>
+      <span id="cmpSub">점은 이번 주 월~금이에요</span>
     </div>
+    <div class="cmp-msg" id="cmpMsg" style="margin-bottom:12px"></div>
     <div class="cards" id="cards"></div>
 
-    <div class="sec-title" style="margin-top:26px">
-      <h2>📊 지난 주와 비교</h2>
-      <span id="cmpSub"></span>
-    </div>
-    <div class="panel" id="compare"></div>
 
     <p class="updated" id="updated"></p>
   </section>
@@ -938,7 +946,10 @@
     brush:      { title: '양치',   icon: '🪥', color: '#22aa9a' },
     walk:       { title: '운동',   icon: '🚶', color: '#8a5cd1' },
     shine:      { title: '반짝',   icon: '✨', color: '#e09a00' },
-    leftover:   { title: '잔반',   icon: '🍱', color: '#e0703a' }
+    leftover:   { title: '잔반',   icon: '🍱', color: '#e0703a' },
+    inquiry:    { title: '질문',   icon: '🔍', color: '#3b5bdb', tab: 'inq' },
+    reading:    { title: '독서',   icon: '📚', color: '#c2581b', tab: 'book' },
+    note:       { title: '배움',   icon: '📒', color: '#b8860b', tab: 'note' }
   };
   const ECO_LABELS = { '반짝이는활동': '반짝' };   // 화면에 보이는 이름
   const ecoLabel = c => ECO_LABELS[c] || c || '기타';
@@ -1290,6 +1301,14 @@
         const avg = list.length ? Math.round(list.reduce((a, r) => a + r.amount, 0) / list.length) : 0;
         return { pre: '다 먹음', big: clean, unit: '번', sub: list.length ? `평균 잔반 ${avg}g` : recent };
       }
+      case 'inquiry':
+        return { pre: '질문', big: list.length, unit: '번', sub: latest ? latest.text : recent };
+      case 'reading': {
+        const pages = list.reduce((a, r) => a + (r.pages || 0), 0);
+        return { pre: '읽은 쪽', big: pages.toLocaleString(), unit: '쪽', sub: latest ? `${latest.text} · ${fmtShort(latest.d)}` : recent };
+      }
+      case 'note':
+        return { pre: '기록', big: list.length, unit: '교시', sub: latest ? `${latest.period}교시 ${latest.text} · ${fmtShort(latest.d)}` : recent };
       default:
         return { big: list.length, unit: '번', sub: recent };
     }
@@ -1344,6 +1363,7 @@
           <div class="c-big">${sm.pre ? `<span class="pre">${sm.pre}</span>` : ''}<b>${sm.big}</b><small>${sm.unit}</small></div>
           <div class="c-sub">${esc(sm.sub)}</div>
           <div class="week">${dots}</div>
+          ${cardCompareHtml(key)}
         </button>`;
     }).join('');
 
@@ -1361,7 +1381,10 @@
     brush:      { label: '양치', desc: '양치한 횟수',           higher: true, val: l => l.length },
     walk:       { label: '운동', desc: '운동한 횟수',           higher: true, val: l => l.length },
     shine:      { label: '반짝', desc: '받은 반짝 개수',        higher: true, val: l => l.length },
-    leftover:   { label: '잔반', desc: '잔반을 다 먹은 횟수',   higher: true, val: l => l.filter(r => r.clean).length }
+    leftover:   { label: '잔반', desc: '잔반을 다 먹은 횟수',   higher: true, val: l => l.filter(r => r.clean).length },
+    inquiry:    { label: '질문', desc: 'AI 도우미에게 한 질문 수', higher: true, val: l => l.length },
+    reading:    { label: '독서', desc: '읽은 쪽수',              higher: true, val: l => l.reduce((a, r) => a + (r.pages || 0), 0) },
+    note:       { label: '배움', desc: '배움 노트를 쓴 교시 수',  higher: true, val: l => l.length }
   };
 
   function inWeek(list, wk) { return list.filter(r => r.d >= wk[0] && r.d <= wk[4]); }
@@ -1380,39 +1403,39 @@
     return `<span class="diff ${good ? 'good' : 'bad'}">${d > 0 ? '▲' : '▼'} ${Math.abs(d)}</span>`;
   }
 
+  /* 카드 안: 지난 주 / 이번 주 막대 + 차이 */
+  function cardCompareHtml(key) {
+    const c = CMP[key];
+    if (!c) return '';
+    const v = weekValues(key);
+    const max = Math.max(v.now, v.last, 1);
+    const unit = key === 'reading' ? '쪽' : '';
+    return `
+      <div class="c-cmp">
+        <div class="ch"><span>지난 주와 비교</span>${diffHtml(v.now, v.last, c.higher)}</div>
+        <div class="br last"><span>지난 주</span><div class="tk"><i style="width:${v.last / max * 100}%"></i></div><b>${v.last.toLocaleString()}${unit}</b></div>
+        <div class="br now"><span>이번 주</span><div class="tk"><i style="width:${v.now / max * 100}%"></i></div><b>${v.now.toLocaleString()}${unit}</b></div>
+      </div>`;
+  }
+
+  /* 활동 위 응원 문구 (쪽수는 단위가 달라서 합계에서 빼요) */
   function renderCompare() {
     const todayDow = fromKey(DATA.today).getDay();
     const dayName = DOW[todayDow];
     const midWeek = todayDow >= 1 && todayDow <= 4;
-    $('cmpSub').textContent = midWeek ? `이번 주는 ${dayName}요일까지` : '월~금 기준';
-
+    $('cmpSub').textContent = midWeek ? `점은 이번 주 · 비교는 ${dayName}요일까지` : '점은 이번 주 월~금이에요';
     let sumNow = 0, sumLast = 0;
-    const rows = Object.keys(CMP).map(key => {
-      const it = ITEMS[key];
-      const c = CMP[key];
+    Object.keys(CMP).forEach(key => {
+      if (key === 'reading') return;
       const v = weekValues(key);
-      sumNow += v.now;
-      sumLast += v.last;
-      const max = Math.max(v.now, v.last, 1);
-      return `
-        <div class="cmp-row click" style="--c:${it.color}" onclick="openDetail('${key}')">
-          <div class="cmp-label"><span>${it.icon}</span>${c.label}</div>
-          <div class="cmp-bars">
-            <div class="cmp-bar last"><span>지난 주</span><div class="track"><i style="width:${v.last / max * 100}%"></i></div><b>${v.last}</b></div>
-            <div class="cmp-bar this"><span>이번 주</span><div class="track"><i style="width:${v.now / max * 100}%"></i></div><b>${v.now}</b></div>
-          </div>
-          ${diffHtml(v.now, v.last, c.higher)}
-        </div>`;
-    }).join('');
-
+      sumNow += v.now; sumLast += v.last;
+    });
     let msg;
     if (sumLast === 0 && sumNow === 0) msg = '🌱 이번 주부터 하나씩 기록을 쌓아 봐요!';
     else if (sumNow >= sumLast) msg = `🎉 지난 주보다 ${sumNow - sumLast > 0 ? (sumNow - sumLast) + '개 더 ' : '만큼 '}해냈어요! 멋져요!`;
     else if (midWeek) msg = `💪 지난 주까지 ${sumLast - sumNow}개 남았어요. 남은 요일에 힘내요!`;
     else msg = `💪 지난 주보다 ${sumLast - sumNow}개 적었어요. 다음 주에 다시 도전해요!`;
-
-    $('compare').innerHTML = `<div class="cmp-msg">${msg}</div>${rows}
-      <div class="cmp-note">출석은 제시간에 온 날, 잔반은 다 먹은 횟수로 비교해요.</div>`;
+    $('cmpMsg').textContent = msg;
   }
 
   /* 상세 화면: 지난 주 / 이번 주 요일별 점 */
@@ -1465,7 +1488,8 @@
     const it = ITEMS[current];
     $('dTitle').innerHTML = `<span>${it.icon}</span>${it.title}`;
     document.documentElement.style.setProperty('--c', it.color);
-    $('dBody').innerHTML = statsHtml(current) + weekCompareHtml(current) + calendarHtml(current) + listHtml(current);
+    const go = it.tab ? `<button class="btn primary" style="width:100%;margin-bottom:16px" onclick="goTab('${it.tab}')">${it.icon} ${it.title} 탭으로 가기 ›</button>` : '';
+    $('dBody').innerHTML = statsHtml(current) + go + weekCompareHtml(current) + calendarHtml(current) + listHtml(current);
   }
 
   function statsHtml(key) {
@@ -1488,6 +1512,11 @@
       list.forEach(r => { const k = r.text || '기타'; cnt[k] = (cnt[k] || 0) + 1; });
       const top = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a])[0];
       s = [['전체', list.length, '번'], ['이번 달', inMonth, '번'], ['자주 한 때', top || '-', '']];
+    } else if (key === 'reading') {
+      const pg = l => l.reduce((a, r) => a + (r.pages || 0), 0);
+      s = [['읽은 쪽', pg(list), '쪽'], ['이번 달', pg(list.filter(r => r.d.startsWith(monthKey))), '쪽'], ['책', new Set(list.map(r => r.text)).size, '권']];
+    } else if (key === 'note') {
+      s = [['전체', list.length, '교시'], ['이번 달', inMonth, '교시'], ['이번 주', inWeek, '교시']];
     } else {
       const unit = key === 'shine' ? '개' : '번';
       s = [['전체', list.length, unit], ['이번 달', inMonth, unit], ['이번 주', inWeek, unit]];
@@ -1575,6 +1604,21 @@
           right = r.clean ? '🌱' : '';
           break;
         }
+        case 'inquiry':
+          main = esc(r.text);
+          if (r.memo) sub += ` · ${esc(r.memo)}`;
+          right = '🔍';
+          break;
+        case 'reading':
+          main = `${esc(r.text)} <span style="color:var(--sub);font-weight:700">${r.start}~${r.end}쪽</span>`;
+          if (r.memo) sub += ` · 💭 ${esc(r.memo)}`;
+          right = `<span class="badge">${r.pages}쪽</span>`;
+          break;
+        case 'note':
+          main = `${r.period}교시 ${esc(r.text)}`;
+          if (r.memo) sub += ` · ${esc(r.memo)}`;
+          right = '📒';
+          break;
       }
       return `<div class="row">${date}<div class="r-main"><div class="r-title">${main}</div><div class="r-sub">${sub}</div></div><div class="r-right">${right}</div></div>`;
     }).join('');
@@ -2173,7 +2217,11 @@
     google.script.run
       .withSuccessHandler(res => {
         showLoading(false);
-        if (!res.ok) { if (res.reason === 'auth') authExpired(); return; }
+        if (!res.ok) {
+          if (res.reason === 'auth') authExpired();
+          else if (res.closed) { INQ = null; $('inqList').innerHTML = closedHtml(res); }
+          return;
+        }
         INQ = res;
         renderInqList();
       })
@@ -2749,6 +2797,13 @@
         <div class="miss">${HWD.missing.map(n => `<span class="tag">${esc(n)}</span>`).join('')}</div></div>` : ''}`;
   }
 
+  /* 이용 시간이 아닐 때 보여주는 화면 */
+  function closedHtml(res) {
+    return `<div class="panel"><div class="locked"><i>🌙</i>지금은 쉬는 시간이에요<br>
+      <span style="font-size:14px;color:var(--faint)">질문·독서·배움 노트는 학교에 있는 시간<br><b>${esc(res.hours || '평일 08:00~15:00')}</b>에 쓸 수 있어요</span></div>
+      <button class="btn ghost" style="width:100%;flex:none;margin-top:4px" onclick="goTab('home')">🏠 홈에서 내 기록 보기</button></div>`;
+  }
+
   /* =================================================================
      독서기록
      ================================================================= */
@@ -2764,7 +2819,11 @@
     google.script.run
       .withSuccessHandler(res => {
         showLoading(false);
-        if (!res.ok) { if (res.reason === 'auth') authExpired(); return; }
+        if (!res.ok) {
+          if (res.reason === 'auth') authExpired();
+          else if (res.closed) { BOOKS = null; $('bookList').innerHTML = closedHtml(res); }
+          return;
+        }
         BOOKS = res;
         renderBookList();
       })
@@ -3140,7 +3199,11 @@
     google.script.run
       .withSuccessHandler(res => {
         showLoading(false);
-        if (!res.ok) { if (res.reason === 'auth') authExpired(); return; }
+        if (!res.ok) {
+          if (res.reason === 'auth') authExpired();
+          else if (res.closed) { NOTES = null; $('noteList').innerHTML = closedHtml(res); }
+          return;
+        }
         NOTES = res;
         if (TEACHER && !noteTStu) noteTDate = res.date;
         renderNoteList();
