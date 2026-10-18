@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#3f9b4b">
-  <title>나의 클래스크 · 오이쉬반</title>
+  <title>오이쉬앱</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥒</text></svg>">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
   <style>
@@ -508,6 +508,13 @@
     .cloud-empty { text-align: center; color: var(--sub); font-size: 14px; font-weight: 600; padding: 18px 0 10px; }
     .cloud-clear { font-size: 12px; font-weight: 800; color: var(--sub); background: var(--bg); padding: 4px 10px; border-radius: 99px; }
 
+    /* 쉬는 시간 보기 모드 안내 */
+    .ro-banner { background: #eef0fa; color: #3a4380; border-radius: 16px; padding: 12px 14px; font-size: 14px; font-weight: 700; line-height: 1.55; margin-bottom: 14px; }
+    .ro-banner span { font-size: 13px; color: #6a72a8; font-weight: 600; }
+    .ro-banner.master { background: #3b5bdb; color: #fff; }
+    .ro-banner.master span { color: rgba(255,255,255,.85); }
+    .master-badge { display: inline-block; font-size: 12px; font-weight: 800; color: #fff; background: #3b5bdb; border-radius: 99px; padding: 2px 9px; margin-left: 6px; vertical-align: 2px; }
+
     /* ---------- 독서기록 ---------- */
     .bk-item .ic { background: #fdf0e3; }
     .bk-item.done .ic { background: var(--brand-soft); }
@@ -577,6 +584,7 @@
     .pd.done { border: 2px solid transparent; background: var(--sc, var(--brand-soft)); }
     .pd.done b, .pd.done span { color: var(--sf, var(--brand)); }
     .pd.on { border: 2px solid var(--ink); }
+    .pd:disabled { opacity: .45; }
     .nt-day { display: flex; align-items: baseline; justify-content: space-between; margin: 20px 2px 10px; }
     .nt-day:first-child { margin-top: 4px; }
     .nt-day b { font-size: 16px; font-weight: 800; }
@@ -691,6 +699,7 @@
       <button class="icon-btn text" onclick="doLogout()">나가기</button>
     </div>
 
+    <div class="ro-banner master" id="masterBar" style="display:none"></div>
     <button class="pin-nudge" id="pinNudge" style="display:none" onclick="openChangePin()">
       🔑 아직 처음 비밀번호예요. 나만 아는 번호로 바꿔요!<b>바꾸기</b>
     </button>
@@ -936,8 +945,15 @@
     try { json = await res.json(); }
     catch (e) { throw new Error('서버 답을 읽지 못했어요. 웹 앱 액세스가 \'모든 사용자\'인지 확인해 주세요.'); }
     if (json && json.__error) throw new Error(json.__error);
-    return json ? json.data : null;
+    const data = json ? json.data : null;
+    // 이용 시간 상태를 따라가요 (쉬는 시간이 되면 쓰기 칸을 숨겨요)
+    if (data && data.school) SCHOOL = data.school;
+    if (data && data.closed) { SCHOOL = { open: false, label: data.hours }; setTimeout(onSchoolClosed, 0); }
+    return data;
   }
+
+  let SCHOOL = null;     // { open, label, bypass } 서버가 알려 주는 이용 시간 상태
+  let MASTER = false;    // 선생님 비밀번호로 들어온 학생 화면인지
 
   /* ---------- 설정 ---------- */
   const ITEMS = {
@@ -1129,10 +1145,15 @@
   /* ---------- 비밀번호 바꾸기 ---------- */
   function openChangePin() {
     if (!INFO.requirePin) { toast('이 앱은 비밀번호를 쓰지 않아요.'); return; }
-    pinMode = 'old';
     pinOld = pinNew = '';
     $('pinCancel').textContent = '취소';
-    showPinStep('비밀번호 바꾸기', '지금 비밀번호 4자리를 눌러요');
+    if (MASTER) {   // 선생님 권한: 지금 비밀번호 없이 새 비밀번호로 바꿔 줄 수 있어요
+      pinMode = 'new';
+      showPinStep('새 비밀번호 정해 주기', `${DATA.student.name} 학생의 새 비밀번호 4자리를 눌러요`);
+    } else {
+      pinMode = 'old';
+      showPinStep('비밀번호 바꾸기', '지금 비밀번호 4자리를 눌러요');
+    }
     $('pinOverlay').classList.add('show');
   }
 
@@ -1201,6 +1222,7 @@
         TOKEN = res.token;
         store.set(STORE_KEY, TOKEN);
         closePin();
+        if (res.master) toast(`👩‍🏫 선생님 권한으로 ${res.name} 화면에 들어왔어요`);
         fetchDashboard(true);
       })
       .withFailureHandler(err => { pinBusy = false; onError(err); })
@@ -1213,6 +1235,8 @@
     DATA = null;
     store.del(STORE_KEY);
     store.del(ROLE_KEY);
+    MASTER = false;
+    SCHOOL = null;
     if (TEACHER) {
       TEACHER = false;
       $('hwHeadTitle').textContent = '📝 과제';
@@ -1257,6 +1281,8 @@
           return;
         }
         DATA = res;
+        MASTER = !!res.master;
+        if (res.school) SCHOOL = res.school;
         lastFetch = Date.now();
         renderHome();
         const active = document.querySelector('.screen.active');
@@ -1320,6 +1346,8 @@
     const given = s.name.length >= 3 ? s.name.slice(1) : s.name;
     $('hello').textContent = `안녕, ${given}! 👋`;
     $('helloSub').textContent = `${INFO.className} ${s.num}번 ${s.name}`;
+    $('masterBar').style.display = MASTER ? 'block' : 'none';
+    $('masterBar').innerHTML = `👩‍🏫 <b>선생님 권한</b>으로 ${esc(s.name)} 화면을 보고 있어요<br><span>질문·독서·배움을 시간 제한 없이 쓸 수 있고, 🔑로 새 비밀번호를 정해 줄 수 있어요</span>`;
 
     // 자산
     $('assetAmount').textContent = DATA.asset.toLocaleString();
@@ -2237,7 +2265,8 @@
       const ids = c ? c.t : [];
       L = L.filter(t => ids.includes(t.id));
     }
-    if (!TEACHER) {
+    html += readOnlyBanner();
+    if (canWrite()) {
       const r = INQ.rules;
       html += `
         <button class="new-inq" onclick="openInq(null)">
@@ -2353,7 +2382,7 @@
 
   function showInq() {
     $('inqTitle').textContent = INQD.inq ? (TEACHER ? `${INQD.inq.num}번 ${INQD.inq.name} · ` : '') + INQD.inq.title : '새 탐구';
-    $('inqRename').style.display = INQD.inq && !TEACHER ? '' : 'none';
+    $('inqRename').style.display = INQD.inq && canWrite() ? '' : 'none';
     renderInq();
     showScreen('inqChatScreen');
     scrollBottom();
@@ -2397,7 +2426,7 @@
   /* 질문을 보낸 뒤: 대화만 다시 그리고, 쓰던 정리는 그대로 둬요 */
   function renderChatOnly() {
     $('chatScroll').innerHTML = chatHtml();
-    if (!TEACHER && INQD.inq && !$('sumText')) { $('colSum').innerHTML = sumHtml(); bindSum(); }
+    if (canWrite() && INQD.inq && !$('sumText')) { $('colSum').innerHTML = sumHtml(); bindSum(); }
     else updateSumProgress();
     updateSeg();
     updateLeft();
@@ -2426,11 +2455,11 @@
   }
 
   function chatHtml() {
-    let html = `<div class="ai-note">🤖 이 도우미는 사람이 아니라 <b>AI</b>예요. 틀릴 수도 있으니 책이나 믿을 만한 자료로 꼭 확인해요. 이름·전화번호 같은 개인정보는 쓰지 않아요. 선생님이 대화를 볼 수 있어요.</div>`;
+    let html = readOnlyBanner() + `<div class="ai-note">🤖 이 도우미는 사람이 아니라 <b>AI</b>예요. 틀릴 수도 있으니 책이나 믿을 만한 자료로 꼭 확인해요. 이름·전화번호 같은 개인정보는 쓰지 않아요. 선생님이 대화를 볼 수 있어요.</div>`;
     const msgs = INQD.messages;
     if (!msgs.length) {
       html += `<div class="chat-empty"><i>💭</i>무엇이 궁금한가요?<br>아래 칸에 질문을 써서 탐구를 시작해요.
-        ${TEACHER ? '' : `<div class="starters">${STARTERS.map((s, i) => `<button onclick="useStarter(${i})">${esc(s)}</button>`).join('')}</div>`}</div>`;
+        ${!canWrite() ? '' : `<div class="starters">${STARTERS.map((s, i) => `<button onclick="useStarter(${i})">${esc(s)}</button>`).join('')}</div>`}</div>`;
       return html + '<div class="chat" id="chatList"></div>';
     }
     html += '<div class="chat" id="chatList">' + msgs.map((m, i) => bubbleHtml(m, i === msgs.length - 1)).join('') + '</div>';
@@ -2443,7 +2472,7 @@
     }
     const nexts = m.next && m.next.length ? `
       <div class="nexts"><small>💡 이어서 생각해 볼 질문</small>
-        ${m.next.map(q => `<button class="next" ${TEACHER ? 'disabled' : ''} onclick="useNext(this)">${esc(q)}</button>`).join('')}
+        ${m.next.map(q => `<button class="next" ${canWrite() ? '' : 'disabled'} onclick="useNext(this)">${esc(q)}</button>`).join('')}
       </div>` : '';
     return `<div class="bub ai ${m.flag ? 'flag' : ''}">
       ${m.flag ? '<span class="warn">⚠️ 선생님 확인 필요</span>' : ''}
@@ -2517,7 +2546,7 @@
     if (!INQD.inq) {
       return `<div class="panel"><div class="locked"><i>📒</i>첫 질문을 하면 여기에서<br>알게 된 것을 정리할 수 있어요</div></div>`;
     }
-    if (!TEACHER) {
+    if (canWrite()) {
       const p = INQD.progress;
       html += `
         <div class="panel">
@@ -2604,7 +2633,7 @@
   function updateChatBar(id) {
     const open = id === 'inqChatScreen';
     const wide = WIDE();
-    const show = open && !TEACHER && (wide || inqTab === 'chat');
+    const show = open && canWrite() && (wide || inqTab === 'chat');
     if ($('chatBar')) $('chatBar').style.display = show ? 'block' : 'none';
     document.body.classList.toggle('chat-mode', show && !wide);
     document.body.classList.toggle('inq-open', open);
@@ -2804,6 +2833,26 @@
       <button class="btn ghost" style="width:100%;flex:none;margin-top:4px" onclick="goTab('home')">🏠 홈에서 내 기록 보기</button></div>`;
   }
 
+  /* 지금 질문·독서·배움에 쓸 수 있는지 (학생만, 이용 시간 밖이면 보기만) */
+  function canWrite() { return !TEACHER && (!SCHOOL || SCHOOL.open); }
+
+  function readOnlyBanner() {
+    if (TEACHER || canWrite()) return '';
+    return `<div class="ro-banner">🌙 지금은 쉬는 시간이라 <b>보기만</b> 할 수 있어요.<br><span>기록은 학교에 있는 시간(${esc(SCHOOL.label || '평일 08:00~15:00')})에 할 수 있어요.</span></div>`;
+  }
+
+  /* 쓰는 중에 쉬는 시간이 되면: 지금 화면을 보기 모드로 다시 그려요 */
+  function onSchoolClosed() {
+    const act = document.querySelector('.screen.active');
+    const id = act ? act.id : '';
+    if (id === 'inqChatScreen' && INQD) { renderInq(); updateChatBar(id); }
+    else if (id === 'inqScreen' && INQ) renderInqList();
+    else if (id === 'bookDetailScreen' && BOOKD) renderBook(false);
+    else if (id === 'bookScreen' && BOOKS) renderBookList();
+    else if (id === 'noteEditScreen' && NOTE_ED) { NOTE_ED = null; showScreen('noteScreen'); if (NOTES) renderNoteList(); }
+    else if (id === 'noteScreen' && NOTES) renderNoteList();
+  }
+
   /* =================================================================
      독서기록
      ================================================================= */
@@ -2847,7 +2896,8 @@
         <div class="stat"><span>다 읽은 책</span><b class="up">${st.finished}<small>권</small></b></div>
         <div class="stat"><span>읽은 쪽수</span><b>${st.pages.toLocaleString()}<small>쪽</small></b></div>
       </div>`;
-    if (!TEACHER) {
+    html += readOnlyBanner();
+    if (canWrite()) {
       html += `
         <button class="new-inq" onclick="openBookForm(false)">
           <i>📘</i><span style="text-align:left"><b>새 책 등록하기</b><span>지금 읽고 있는 책을 추가해요</span></span>
@@ -2961,7 +3011,7 @@
     const lastRev = D.reviews[D.reviews.length - 1];
 
     $('bookTitle').textContent = (TEACHER ? `${b.num}번 ${b.name} · ` : '') + b.title;
-    $('bookEditBtn').style.display = TEACHER ? 'none' : '';
+    $('bookEditBtn').style.display = canWrite() ? '' : 'none';
 
     // 위: 진행 막대 + 완독 보상 조건
     const c = D.check;
@@ -2979,14 +3029,14 @@
           <div class="${c.review ? 'ok' : ''}">감상문<b>${c.review ? '✓' : `${D.reviewLen}/${R.minReview}자`}</b></div>
           <div class="${c.days ? 'ok' : ''}">기록한 날<b>${c.days ? '✓' : `${D.days}/${R.minDays}일`}</b></div>
         </div>
-        ${TEACHER ? '' : `<div class="bk-hint">세 가지를 모두 채우면 <b>${R.bookReward}야호</b>를 받아요</div>`}`;
+        ${!canWrite() ? '' : `<div class="bk-hint">세 가지를 모두 채우면 <b>${R.bookReward}야호</b>를 받아요</div>`}`;
     }
     head += `</div>`;
-    $('bookHead').innerHTML = head;
+    $('bookHead').innerHTML = readOnlyBanner() + head;
 
     // 왼쪽: 읽은 기록
     let logCol = `<div class="bk-col-log"><div class="col-head2">📖 읽은 기록</div>`;
-    if (!TEACHER) {
+    if (canWrite()) {
       logCol += c.rewarded ? '' : `
         <div class="panel">
           <div class="field-label" style="gap:8px">오늘 읽은 쪽 <span style="text-align:right">${D.readRewardedToday ? '오늘 독서 야호는 받았어요 ✓' : `${R.minPages}쪽 이상 + 한 줄 생각 → ${R.reward}야호`}</span></div>
@@ -3013,7 +3063,7 @@
 
     // 오른쪽: 감상문
     let revCol = `<div class="bk-col-rev"><div class="col-head2">✍️ 감상문</div>`;
-    if (!TEACHER) {
+    if (canWrite()) {
       const val = draftRev !== null ? draftRev : (lastRev ? lastRev.text : '');
       revCol += `
         <div class="panel">
@@ -3223,21 +3273,23 @@
       const today = N.today;
       const mineToday = N.notes.filter(n => n.date === today);
       const cells = [];
+      const w = canWrite();
       for (let p = 1; p <= R.periods; p++) {
         const n = mineToday.find(x => x.period === p);
-        cells.push(`<button class="pd ${n ? 'done' : ''}" style="${n ? sjStyle(n.subject) : ''}" onclick="openNoteEdit('${today}', ${p})">
-          <b>${p}교시</b><span>${n ? esc(n.subject) : '+ 쓰기'}</span></button>`);
+        cells.push(`<button class="pd ${n ? 'done' : ''}" style="${n ? sjStyle(n.subject) : ''}" ${!n && !w ? 'disabled' : ''} onclick="openNoteEdit('${today}', ${p})">
+          <b>${p}교시</b><span>${n ? esc(n.subject) : w ? '+ 쓰기' : '-'}</span></button>`);
       }
+      html += readOnlyBanner();
       html += `
         <div class="nt-today">
           <div class="hd"><b>✏️ 오늘 ${fmtDay(today)}</b><span>${N.todayYaho ? `🪙 오늘 +${N.todayYaho}야호` : ''}</span></div>
           <div class="pd-grid">${cells.join('')}</div>
         </div>
-        <div class="rule-card">
+        ${!w ? '' : `<div class="rule-card">
           🪙 <b>한 교시</b>를 기록할 때마다 <b>${R.reward}야호</b>! (하루 최대 ${R.reward * R.periods}야호)<br>
           · <b>오늘</b> 기록만 받아요 · 세 칸 합쳐 <b>${R.minLen}자 이상</b> (띄어쓰기 빼고)<br>
           · 지난 날도 ${R.pastDays}일 전까지 기록할 수 있어요 (야호는 없어요)
-        </div>`;
+        </div>`}`;
     }
     html += `<div class="seg">
         <button class="${noteView === 'date' ? 'on' : ''}" onclick="setNoteView('date')">📅 날짜별</button>
@@ -3415,7 +3467,7 @@
   }
 
   function openNoteEdit(date, period, num) {
-    if (TEACHER) {
+    if (TEACHER || !canWrite()) {        // 선생님, 또는 쉬는 시간의 학생은 보기 화면으로
       const n = findNote(date, period, num);
       if (!n) return;
       NOTE_ED = { note: n };
@@ -3561,7 +3613,7 @@
   /* 선생님: 기록 보기 + 피드백 */
   function renderNoteView() {
     const n = NOTE_ED.note;
-    $('noteEdTitle').textContent = `${n.num}번 ${n.name}`;
+    $('noteEdTitle').textContent = TEACHER ? `${n.num}번 ${n.name}` : '배움 노트';
     const block = (ic, label, t) => `<div class="ed-label">${ic} ${label}</div><div class="nt-line" style="margin:0 2px">${t ? esc(t) : '<span style="color:var(--faint)">(안 썼어요)</span>'}</div>`;
     $('noteEdBody').innerHTML = `
       <div class="panel">
@@ -3573,11 +3625,11 @@
         ${block('💡', '알게 된 것', n.learned)}${block('❓', '궁금한 것', n.wonder)}${block('💭', '느낀 것', n.felt)}
         <p class="updated" style="text-align:left;margin-top:12px">마지막 수정 ${esc(n.updated)}</p>
       </div>
-      <div class="panel">
+      ${!TEACHER ? readOnlyBanner() + (n.feedback ? `<div class="panel"><div class="field-label">👩‍🏫 선생님 피드백</div><div class="nt-fb" style="margin-top:0">${esc(n.feedback)}</div></div>` : '') : `<div class="panel">
         <div class="field-label">👩‍🏫 피드백 <span>학생에게 보여요</span></div>
         <textarea class="nt-text" id="ntFb" maxlength="500" placeholder="칭찬이나 생각해 볼 질문을 남겨 주세요">${esc(n.feedback)}</textarea>
         <div class="btn-row"><button class="btn primary" id="ntFbSave" onclick="saveNoteFeedback()">피드백 저장</button></div>
-      </div>`;
+      </div>`}`;
   }
 
   function saveNoteFeedback() {
