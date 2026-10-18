@@ -553,6 +553,74 @@
       .bk-split[data-tab="rev"] .bk-col-log { display: none; }
     }
 
+    /* ---------- 배움 노트 ---------- */
+    .nt-today { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; margin-bottom: 14px; }
+    .nt-today .hd { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+    .nt-today .hd b { font-size: 17px; font-weight: 800; white-space: nowrap; }
+    .nt-today .hd span { font-size: 13px; font-weight: 800; color: #b37400; white-space: nowrap; }
+    .pd-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+    .pd { border-radius: 14px; border: 2px dashed #d5dccd; padding: 8px 2px; text-align: center; min-width: 0; }
+    .pd b { display: block; font-size: 13px; font-weight: 800; color: var(--sub); }
+    .pd span { display: block; font-size: 12px; font-weight: 800; color: var(--faint); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pd.done { border: 2px solid transparent; background: var(--sc, var(--brand-soft)); }
+    .pd.done b, .pd.done span { color: var(--sf, var(--brand)); }
+    .pd.on { border: 2px solid var(--ink); }
+    .nt-day { display: flex; align-items: baseline; justify-content: space-between; margin: 20px 2px 10px; }
+    .nt-day:first-child { margin-top: 4px; }
+    .nt-day b { font-size: 16px; font-weight: 800; }
+    .nt-day span { font-size: 13px; color: var(--sub); font-weight: 700; }
+    .nt-card { width: 100%; display: block; background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 14px 16px; margin-bottom: 10px; }
+    .nt-card:active { transform: scale(.99); }
+    .nt-card .hd { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .nt-card .per { font-size: 13px; font-weight: 800; color: var(--sub); }
+    .nt-card .sj { font-size: 13px; font-weight: 800; padding: 3px 10px; border-radius: 99px; background: var(--sc); color: var(--sf); }
+    .nt-card .hd em { margin-left: auto; font-style: normal; font-size: 12px; font-weight: 800; color: var(--faint); white-space: nowrap; }
+    .nt-card .hd em.got { color: #b37400; }
+    .nt-line { display: flex; gap: 8px; font-size: 15px; line-height: 1.55; margin-top: 4px; word-break: break-word; white-space: pre-wrap; }
+    .nt-line i { font-style: normal; flex-shrink: 0; }
+    .nt-fb { margin-top: 10px; background: #eef1fb; border-radius: 12px; padding: 8px 12px; font-size: 14px; line-height: 1.5; color: #2f3e8f; white-space: pre-wrap; word-break: break-word; }
+    .sj-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .sj-chip { height: 38px; padding: 0 14px; border-radius: 99px; background: var(--card); box-shadow: var(--shadow); font-size: 15px; font-weight: 800; color: var(--ink); white-space: nowrap; }
+    .sj-chip small { font-size: 12px; color: var(--faint); margin-left: 4px; }
+    .sj-chip.on { background: var(--sf); color: #fff; }
+    .sj-chip.on small { color: rgba(255,255,255,.8); }
+    .sj-chip:disabled { opacity: .35; box-shadow: none; }
+    .date-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .date-nav b { flex: 1; text-align: center; font-size: 18px; font-weight: 800; }
+    .date-nav button { width: 44px; height: 44px; border-radius: 14px; background: var(--card); box-shadow: var(--shadow); font-size: 18px; text-align: center; }
+    .date-nav button:disabled { opacity: .3; }
+    .ed-label { font-size: 15px; font-weight: 800; margin: 16px 2px 8px; display: flex; justify-content: space-between; align-items: center; }
+    .ed-label:first-child { margin-top: 0; }
+    .ed-label span { font-size: 12px; color: var(--faint); font-weight: 700; }
+    .pd-pick { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+    .pd-pick button { height: 54px; border-radius: 14px; background: var(--bg); text-align: center; font-size: 16px; font-weight: 800; color: var(--sub); position: relative; }
+    .pd-pick button small { display: block; font-size: 11px; font-weight: 800; margin-top: 1px; }
+    .pd-pick button.has { background: var(--brand-soft); color: var(--brand); }
+    .pd-pick button.on { background: var(--ink); color: #fff; }
+    .sj-pick { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+    .sj-pick button { height: 42px; border-radius: 12px; background: var(--bg); text-align: center; font-size: 15px; font-weight: 800; color: var(--sub); }
+    .sj-pick button.on { background: var(--sf); color: #fff; }
+    .nt-text { width: 100%; min-height: 76px; resize: vertical; border-radius: 14px; border: 2px solid var(--line); background: #fff; padding: 12px 14px; font-family: inherit; font-size: 16px; line-height: 1.5; color: var(--ink); outline: none; }
+    .nt-text:focus { border-color: var(--brand); }
+    .nt-count { text-align: center; font-size: 14px; font-weight: 800; color: var(--sub); margin-top: 14px; }
+    .nt-count.ok { color: var(--brand); }
+    .nt-count.got { color: #b37400; }
+    .inq-from { font-size: 12px; font-weight: 800; color: #3b5bdb; background: #eef1fb; padding: 4px 10px; border-radius: 99px; }
+    .nt-grid { width: 100%; min-width: 330px; border-collapse: separate; border-spacing: 0 6px; table-layout: fixed; }
+    .nt-grid col.c-who { width: 86px; } .nt-grid col.c-cnt { width: 34px; }
+    .nt-grid th { font-size: 12px; color: var(--sub); font-weight: 800; padding: 0 2px 2px; }
+    .nt-grid td { background: var(--card); padding: 6px 3px; text-align: center; }
+    .nt-grid td:first-child { border-radius: 12px 0 0 12px; text-align: left; padding-left: 10px; }
+    .nt-grid td:last-child { border-radius: 0 12px 12px 0; padding-right: 8px; }
+    .nt-grid .who { font-size: 14px; font-weight: 800; white-space: nowrap; color: var(--ink); background: none; padding: 4px 0; }
+    .nt-grid .who small { color: var(--faint); margin-right: 4px; }
+    .nt-grid .cell { width: 100%; height: 34px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center; background: var(--bg); color: var(--faint); }
+    .nt-grid .cell.done { background: var(--sc); color: var(--sf); }
+    .nt-grid .cell.fb { box-shadow: inset 0 -4px 0 var(--sf); }
+    .nt-grid .cnt { font-size: 13px; font-weight: 800; color: var(--sub); white-space: nowrap; }
+    .back-chip { display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 14px; border-radius: 99px; background: var(--card); box-shadow: var(--shadow); font-size: 14px; font-weight: 800; color: var(--sub); margin-bottom: 14px; }
+    @media (max-width: 400px) { .sj-pick { grid-template-columns: repeat(4, 1fr); } }
+
     /* ---------- 공통 ---------- */
     .loading { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(243,246,239,.7); z-index: 30; }
     .loading.show { display: flex; }
@@ -716,6 +784,28 @@
     <div id="bookBody"></div>
   </section>
 
+  <!-- 배움 노트 목록 -->
+  <section class="screen" id="noteScreen">
+    <div class="top">
+      <div class="who">
+        <h1 id="noteHeadTitle">📒 배움 노트</h1>
+        <p id="noteHeadSub">수업마다 배운 것을 기록해요</p>
+      </div>
+      <button class="icon-btn" onclick="loadNotes(true)" title="새로고침">🔄</button>
+      <button class="icon-btn text" id="noteOut" style="display:none" onclick="doLogout()">나가기</button>
+    </div>
+    <div id="noteList"></div>
+  </section>
+
+  <!-- 배움 노트 쓰기 / 보기 -->
+  <section class="screen" id="noteEditScreen">
+    <div class="top">
+      <button class="icon-btn" onclick="closeNoteEdit()">←</button>
+      <div class="d-title" id="noteEdTitle">배움 노트 쓰기</div>
+    </div>
+    <div id="noteEdBody"></div>
+  </section>
+
   <!-- 과제 상세 -->
   <section class="screen" id="hwDetailScreen">
     <div class="top">
@@ -734,6 +824,7 @@
     <button id="tabHw" onclick="goTab('hw')"><i>📝</i>과제<span class="dot" id="hwDot" style="display:none"></span></button>
     <button id="tabInq" onclick="goTab('inq')"><i>🔍</i>질문</button>
     <button id="tabBook" onclick="goTab('book')"><i>📚</i>독서</button>
+    <button id="tabNote" onclick="goTab('note')"><i>📒</i>배움</button>
   </div>
 </nav>
 
@@ -854,7 +945,7 @@
   const ECO_ICONS = {
     '출석체크': '✅', '우유체크': '🥛', '양치체크': '🪥', '운동체크': '🚶',
     '반짝이는활동': '✨', '잔반 다 먹음': '🍱', '질문 탐구 정리': '🔍',
-    '독서 기록': '📖', '책 다 읽음': '📚'
+    '독서 기록': '📖', '책 다 읽음': '📚', '배움 노트': '📒'
   };
   const STORE_KEY = 'classk_my_token';
   const DOW = ['일', '월', '화', '수', '목', '금', '토'];
@@ -928,7 +1019,7 @@
 
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
-    const nav = ['homeScreen', 'hwScreen', 'inqScreen', 'bookScreen'].includes(id);
+    const nav = ['homeScreen', 'hwScreen', 'inqScreen', 'bookScreen', 'noteScreen'].includes(id);
     $('nav').style.display = nav ? 'block' : 'none';
     document.body.classList.toggle('has-nav', nav);
     $('tabHome').style.display = TEACHER ? 'none' : '';
@@ -936,6 +1027,7 @@
     $('tabHw').classList.toggle('on', id === 'hwScreen');
     $('tabInq').classList.toggle('on', id === 'inqScreen');
     $('tabBook').classList.toggle('on', id === 'bookScreen');
+    $('tabNote').classList.toggle('on', id === 'noteScreen');
     document.body.classList.toggle('book-open', id === 'bookDetailScreen');
     updateChatBar(id);
     window.scrollTo(0, 0);
@@ -1121,7 +1213,11 @@
       $('bookOut').style.display = 'none';
       $('bookHeadTitle').textContent = '📚 독서기록';
       $('bookHeadSub').textContent = '읽은 만큼 기록하고, 느낀 점을 남겨요';
+      $('noteOut').style.display = 'none';
+      $('noteHeadTitle').textContent = '📒 배움 노트';
+      $('noteHeadSub').textContent = '수업마다 배운 것을 기록해요';
     }
+    NOTES = null; NOTE_ED = null; noteTDate = null; noteTStu = null; noteView = 'date'; noteSubj = null; noteWord = null; noteCloudSubj = null;
     BOOKS = null;
     BOOKD = null;
     bookSel = null;
@@ -1553,6 +1649,7 @@
     if (tab === 'home') { showScreen('homeScreen'); return; }
     if (tab === 'inq') { showScreen('inqScreen'); loadInquiries(!INQ); return; }
     if (tab === 'book') { showScreen('bookScreen'); loadBooks(!BOOKS); return; }
+    if (tab === 'note') { showScreen('noteScreen'); loadNotes(!NOTES); return; }
     showScreen('hwScreen');
     loadHomework(!HW);
   }
@@ -2558,6 +2655,10 @@
     $('bookOut').style.display = 'grid';
     $('bookHeadTitle').textContent = '👩‍🏫 독서기록 보기';
     $('bookHeadSub').textContent = '학생들이 읽은 책과 기록, 감상문';
+    $('noteOut').style.display = 'grid';
+    $('noteHeadTitle').textContent = '👩‍🏫 배움 노트 보기';
+    $('noteHeadSub').textContent = '날짜별로 학생들의 배움 기록을 확인해요';
+    NOTES = null; noteTDate = null; noteTStu = null;
     HW = null;
     INQ = null;
     BOOKS = null;
@@ -3009,6 +3110,432 @@
     const fail = e => { showLoading(false); $('bfSave').disabled = false; onError(e); };
     if (bookEditing) google.script.run.withSuccessHandler(done).withFailureHandler(fail).editBook(TOKEN, BOOKD.book.id, title, author, pages);
     else google.script.run.withSuccessHandler(done).withFailureHandler(fail).addBook(TOKEN, title, author, pages);
+  }
+
+  /* =================================================================
+     배움 노트
+     ================================================================= */
+  let NOTES = null;          // 서버에서 받은 목록 (학생: 내 기록 전체 / 선생님: 하루치 또는 학생 한 명)
+  let NOTE_ED = null;        // 쓰기 화면 상태 { date, period, subject }
+  let noteView = 'date';     // date | subject
+  let noteSubj = null;       // 과목별 보기에서 고른 과목
+  let noteTDate = null;      // 선생님: 보고 있는 날짜
+  let noteTStu = null;       // 선생님: 보고 있는 학생 번호 (없으면 날짜별 표)
+  let noteBusy = false;
+  let noteWord = null;       // 낱말 구름에서 고른 낱말
+  let noteCloudSubj = null;  // 선생님 표 화면: 낱말 구름 과목 (null = 전체)
+  const SUBJ_COLORS = {
+    '국어': ['#fde8e8', '#c43d3d'], '수학': ['#e6effc', '#2f6fc4'], '사회': ['#fdf0e0', '#b8630a'],
+    '과학': ['#e3f4ea', '#2b8a4b'], '도덕': ['#f3e9fb', '#8a4bc4'], '영어': ['#e3f5f6', '#1d8a91'],
+    '음악': ['#fce8f3', '#bf3d87'], '미술': ['#fff3d6', '#a87800'], '체육': ['#e9f6dd', '#4f8a1f'],
+    '실과': ['#efece6', '#7a6648'], '창체': ['#eaeaf7', '#4d52b0']
+  };
+  const sjStyle = s => { const c = SUBJ_COLORS[s] || ['#eef0ea', '#6b756b']; return `--sc:${c[0]};--sf:${c[1]}`; };
+  const addDays = (k, n) => { const d = fromKey(k); d.setDate(d.getDate() + n); return toKey(d); };
+  const noteLen = (...a) => a.join('').replace(/\s/g, '').length;
+
+  function loadNotes(withLoading) {
+    if (withLoading) showLoading(true);
+    const opts = TEACHER ? (noteTStu ? { num: noteTStu } : { date: noteTDate }) : {};
+    google.script.run
+      .withSuccessHandler(res => {
+        showLoading(false);
+        if (!res.ok) { if (res.reason === 'auth') authExpired(); return; }
+        NOTES = res;
+        if (TEACHER && !noteTStu) noteTDate = res.date;
+        renderNoteList();
+      })
+      .withFailureHandler(onError)
+      .getNotes(TOKEN, opts);
+  }
+
+  function renderNoteList() {
+    if (TEACHER && !noteTStu) { renderNoteGrid(); return; }
+    const N = NOTES, R = N.rules;
+    let html = '';
+    if (TEACHER) {
+      html += `<button class="back-chip" onclick="noteBackToGrid()">← 날짜별 표로</button>
+        <div class="sec-title" style="margin-top:0"><h2>${N.student.num}번 ${esc(N.student.name)}</h2><span>배움 노트 ${N.notes.length}개</span></div>`;
+    } else {
+      const today = N.today;
+      const mineToday = N.notes.filter(n => n.date === today);
+      const cells = [];
+      for (let p = 1; p <= R.periods; p++) {
+        const n = mineToday.find(x => x.period === p);
+        cells.push(`<button class="pd ${n ? 'done' : ''}" style="${n ? sjStyle(n.subject) : ''}" onclick="openNoteEdit('${today}', ${p})">
+          <b>${p}교시</b><span>${n ? esc(n.subject) : '+ 쓰기'}</span></button>`);
+      }
+      html += `
+        <div class="nt-today">
+          <div class="hd"><b>✏️ 오늘 ${fmtDay(today)}</b><span>${N.todayYaho ? `🪙 오늘 +${N.todayYaho}야호` : ''}</span></div>
+          <div class="pd-grid">${cells.join('')}</div>
+        </div>
+        <div class="rule-card">
+          🪙 <b>한 교시</b>를 기록할 때마다 <b>${R.reward}야호</b>! (하루 최대 ${R.reward * R.periods}야호)<br>
+          · <b>오늘</b> 기록만 받아요 · 세 칸 합쳐 <b>${R.minLen}자 이상</b> (띄어쓰기 빼고)<br>
+          · 지난 날도 ${R.pastDays}일 전까지 기록할 수 있어요 (야호는 없어요)
+        </div>`;
+    }
+    html += `<div class="seg">
+        <button class="${noteView === 'date' ? 'on' : ''}" onclick="setNoteView('date')">📅 날짜별</button>
+        <button class="${noteView === 'subject' ? 'on' : ''}" onclick="setNoteView('subject')">📚 과목별</button>
+      </div>`;
+    if (!N.notes.length) {
+      html += `<div class="panel"><div class="locked"><i>📒</i>${TEACHER ? '아직 기록이 없어요' : '아직 기록이 없어요. 오늘 배운 것부터 써 볼까요?'}</div></div>`;
+      $('noteList').innerHTML = html;
+      return;
+    }
+    html += noteView === 'date' ? noteByDateHtml(N.notes) : noteBySubjectHtml(N.notes);
+    $('noteList').innerHTML = html;
+  }
+
+  function setNoteView(v) { noteView = v; noteWord = null; renderNoteList(); }
+  function pickNoteSubj(s) { noteSubj = s; noteWord = null; renderNoteList(); }
+  function pickNoteWord(w) {
+    noteWord = noteWord === w ? null : w;
+    if (TEACHER && !noteTStu) renderNoteGrid(); else renderNoteList();
+  }
+  function pickCloudSubj(s) { noteCloudSubj = s; noteWord = null; renderNoteGrid(); }
+
+  /* 낱말 구름 그리기 (질문 탐구·독서와 같은 모양) */
+  function noteCloudHtml(words, title, foot, emptyMsg) {
+    words = words || [];
+    if (words.length < 3) {
+      return `<div class="cloud-card"><div class="cloud-head"><b>${title}</b></div><div class="cloud-empty">${emptyMsg}</div></div>`;
+    }
+    const max = words[0].n, min = words[words.length - 1].n;
+    const size = n => max === min ? 24 : Math.round(15 + (Math.sqrt(n - min) / Math.sqrt(max - min)) * 27);
+    const arranged = [];
+    words.forEach((w, i) => (i % 2 ? arranged.push(w) : arranged.unshift(w)));
+    const btns = arranged.map(w => {
+      const color = CLOUD_COLORS[hashStr(w.w) % CLOUD_COLORS.length];
+      const sel = noteWord === w.w;
+      return `<button class="cw ${sel ? 'on' : ''} ${noteWord && !sel ? 'dim' : ''}" style="font-size:${size(w.n)}px;--cw:${color}"
+        title="${w.n}번" onclick="pickNoteWord('${esc(w.w).replace(/'/g, "\\'")}')">${esc(w.w)}</button>`;
+    }).join('');
+    return `
+      <div class="cloud-card">
+        <div class="cloud-head"><b>${title}</b><span>${noteWord ? `<button class="cloud-clear" onclick="pickNoteWord(null)">전체 보기 ✕</button>` : '낱말을 눌러 보세요'}</span></div>
+        <div class="cloud">${btns}</div>
+        <div class="cloud-foot">${foot}</div>
+      </div>`;
+  }
+
+  /* 고른 낱말이 나온 기록만 */
+  function filterByWord(notes, words) {
+    if (!noteWord) return notes;
+    const c = (words || []).find(x => x.w === noteWord);
+    if (!c) { noteWord = null; return notes; }
+    return notes.filter(n => c.t.includes(n.id));
+  }
+
+  const whoseCloud = () => TEACHER ? `${esc(NOTES.student.name)}의` : '나의';
+
+  function noteByDateHtml(allNotes) {
+    const words = NOTES.cloud ? NOTES.cloud.all : [];
+    let html = noteCloudHtml(words, `☁️ ${whoseCloud()} 배움 낱말 구름 · 전체`,
+      '알게 된 것, 궁금한 것, 느낀 것에서 많이 쓴 낱말일수록 크게 보여요',
+      '배움 노트를 쓸수록 낱말 구름이 자라요 🌱');
+    const notes = filterByWord(allNotes, words);
+    if (noteWord) html += `<div class="hw-group">🔎 '${esc(noteWord)}'이(가) 나온 기록 ${notes.length}</div>`;
+    const days = [...new Set(notes.map(n => n.date))].sort().reverse();
+    html += days.map(d => {
+      const list = notes.filter(n => n.date === d).sort((a, b) => a.period - b.period);
+      const y = list.reduce((a, n) => a + n.yaho, 0);
+      return `<div class="nt-day"><b>${fmtDay(d)}</b><span>${list.length}교시 기록${y ? ` · 🪙 +${y}` : ''}</span></div>` +
+        list.map(n => noteCardHtml(n, false)).join('');
+    }).join('');
+    return html;
+  }
+
+  function noteBySubjectHtml(notes) {
+    const R = NOTES.rules;
+    const count = s => notes.filter(n => n.subject === s).length;
+    if (!noteSubj || !count(noteSubj)) noteSubj = notes[0].subject;
+    const chips = R.subjects.map(s => {
+      const c = count(s);
+      return `<button class="sj-chip ${noteSubj === s ? 'on' : ''}" style="${sjStyle(s)}" ${c ? '' : 'disabled'} onclick="pickNoteSubj('${s}')">${s}<small>${c}</small></button>`;
+    }).join('');
+    const words = NOTES.cloud && NOTES.cloud.subjects ? NOTES.cloud.subjects[noteSubj] : [];
+    let list = notes.filter(n => n.subject === noteSubj).sort((a, b) => b.date.localeCompare(a.date) || a.period - b.period);
+    let html = `<div class="sj-chips">${chips}</div>`;
+    html += noteCloudHtml(words, `☁️ ${esc(noteSubj)} 낱말 구름`,
+      `${esc(noteSubj)} 시간에 쓴 배움 노트에서 많이 쓴 낱말이에요`,
+      `${esc(noteSubj)} 기록이 쌓이면 낱말 구름이 생겨요 🌱`);
+    list = filterByWord(list, words);
+    html += `<div class="hw-group">${noteWord ? `🔎 '${esc(noteWord)}'이(가) 나온 ${esc(noteSubj)} 기록` : `📚 ${esc(noteSubj)} 기록`} ${list.length}</div>`;
+    return html + list.map(n => noteCardHtml(n, true)).join('');
+  }
+
+  function noteCardHtml(n, showDate, showName) {
+    const line = (ic, t) => t ? `<div class="nt-line"><i>${ic}</i><span>${esc(t)}</span></div>` : '';
+    return `
+      <button class="nt-card" onclick="openNoteEdit('${n.date}', ${n.period}, ${n.num})">
+        <div class="hd">
+          <span class="per">${showName ? `${n.num}번 ${esc(n.name)} · ` : ''}${showDate ? fmtShort(n.date) + ' · ' : ''}${n.period}교시</span>
+          <span class="sj" style="${sjStyle(n.subject)}">${esc(n.subject)}</span>
+          ${n.yaho ? `<em class="got">🪙 +${n.yaho}</em>` : `<em>${esc(n.updated)}</em>`}
+        </div>
+        ${line('💡', n.learned)}${line('❓', n.wonder)}${line('💭', n.felt)}
+        ${n.feedback ? `<div class="nt-fb">👩‍🏫 ${esc(n.feedback)}</div>` : ''}
+      </button>`;
+  }
+
+  /* ---------- 선생님: 날짜별 표 ---------- */
+  function renderNoteGrid() {
+    const N = NOTES, R = N.rules;
+    const date = N.date;
+    const written = new Set(N.notes.map(n => n.num));
+    let html = `
+      <div class="date-nav">
+        <button onclick="noteShiftDate(-1)">◀</button>
+        <b>${fmtDay(date)}${date === N.today ? ' · 오늘' : ''}</b>
+        <button onclick="noteShiftDate(1)" ${date >= N.today ? 'disabled' : ''}>▶</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><span>기록한 학생</span><b>${written.size}<small>/${N.students.length}명</small></b></div>
+        <div class="stat"><span>기록 수</span><b>${N.notes.length}<small>개</small></b></div>
+        <div class="stat"><span>피드백</span><b>${N.notes.filter(n => n.feedback).length}<small>개</small></b></div>
+      </div>
+      <div class="panel" style="padding:10px 10px 6px;overflow-x:auto">
+      <table class="nt-grid"><colgroup><col class="c-who">${'<col>'.repeat(R.periods)}<col class="c-cnt"></colgroup><thead><tr><th style="text-align:left;padding-left:10px">학생</th>`;
+    for (let p = 1; p <= R.periods; p++) html += `<th>${p}</th>`;
+    html += `<th></th></tr></thead><tbody>`;
+    N.students.forEach(s => {
+      const mine = N.notes.filter(n => n.num === s.num);
+      html += `<tr><td><button class="who" onclick="openNoteStudent(${s.num})"><small>${s.num}</small>${esc(s.name)} ›</button></td>`;
+      for (let p = 1; p <= R.periods; p++) {
+        const n = mine.find(x => x.period === p);
+        html += `<td>${n ? `<button class="cell done ${n.feedback ? 'fb' : ''}" style="${sjStyle(n.subject)}" title="${n.feedback ? '피드백 남김' : ''}" onclick="openNoteEdit('${date}', ${p}, ${s.num})">${esc(n.subject)}</button>` : '<div class="cell" style="line-height:34px">-</div>'}</td>`;
+      }
+      html += `<td class="cnt">${mine.length ? mine.length + '개' : ''}</td></tr>`;
+    });
+    html += `</tbody></table></div><p class="updated" style="margin-bottom:22px">학생 이름을 누르면 그 학생의 기록을 날짜별·과목별로 볼 수 있어요 · 밑줄 칸은 피드백을 남긴 기록이에요</p>`;
+
+    // 우리 반 낱말 구름 (전체 기간 · 전체 또는 과목별)
+    const C = N.cloud || { all: [], subjects: {} };
+    if (noteCloudSubj && !C.subjects[noteCloudSubj]) noteCloudSubj = null;
+    const subs = R.subjects.filter(s => C.subjects[s]);
+    html += `<div class="sec-title"><h2>☁️ 우리 반 배움 낱말 구름</h2><span>전체 기간</span></div>`;
+    if (subs.length) {
+      html += `<div class="sj-chips"><button class="sj-chip ${!noteCloudSubj ? 'on' : ''}" style="--sf:var(--ink)" onclick="pickCloudSubj(null)">전체</button>` +
+        subs.map(s => `<button class="sj-chip ${noteCloudSubj === s ? 'on' : ''}" style="${sjStyle(s)}" onclick="pickCloudSubj('${s}')">${s}</button>`).join('') + `</div>`;
+    }
+    const words = noteCloudSubj ? C.subjects[noteCloudSubj] : C.all;
+    html += noteCloudHtml(words, noteCloudSubj ? `${esc(noteCloudSubj)} 낱말 구름` : '전체 낱말 구름',
+      `학생들이 ${noteCloudSubj ? esc(noteCloudSubj) + ' 시간에 ' : ''}쓴 배움 노트에서 많이 쓴 낱말일수록 크게 보여요`,
+      '배움 노트가 쌓이면 낱말 구름이 생겨요 🌱');
+    if (noteWord) {
+      const c = (words || []).find(x => x.w === noteWord);
+      const list = c ? (N.cloudNotes || []).filter(n => c.t.includes(n.id)) : [];
+      html += `<div class="hw-group">🔎 '${esc(noteWord)}'이(가) 나온 기록 (최근 ${list.length}개)</div>` +
+        list.map(n => noteCardHtml(n, true, true)).join('');
+    }
+    $('noteList').innerHTML = html;
+  }
+
+  function noteShiftDate(n) {
+    const next = addDays(NOTES.date, n);
+    if (next > NOTES.today) return;
+    noteTDate = next;
+    noteWord = null;
+    loadNotes(true);
+  }
+  function openNoteStudent(num) { noteTStu = num; noteView = 'date'; noteSubj = null; noteWord = null; loadNotes(true); }
+  function noteBackToGrid() { noteTStu = null; noteWord = null; loadNotes(true); }
+
+  /* ---------- 쓰기 / 보기 화면 ---------- */
+  function findNote(date, period, num) {
+    if (!NOTES) return null;
+    const pool = NOTES.notes.concat(NOTES.cloudNotes || []);
+    return pool.find(n => n.date === date && n.period === period && (!TEACHER || n.num === num)) || null;
+  }
+
+  function openNoteEdit(date, period, num) {
+    if (TEACHER) {
+      const n = findNote(date, period, num);
+      if (!n) return;
+      NOTE_ED = { note: n };
+      renderNoteView();
+      showScreen('noteEditScreen');
+      return;
+    }
+    NOTE_ED = { date: date, period: period, subject: null };
+    loadNoteToEditor();
+    showScreen('noteEditScreen');
+  }
+
+  function noteDirty() {
+    if (TEACHER || !NOTE_ED || !$('ntLearned')) return false;
+    const n = findNote(NOTE_ED.date, NOTE_ED.period);
+    const cur = [$('ntLearned').value.trim(), $('ntWonder').value.trim(), $('ntFelt').value.trim()];
+    const orig = n ? [n.learned, n.wonder, n.felt] : ['', '', ''];
+    return cur.some((v, i) => v !== orig[i]) || (n ? n.subject !== NOTE_ED.subject : false);
+  }
+
+  function closeNoteEdit() {
+    if (noteDirty() && !confirm('저장하지 않은 내용이 있어요. 나갈까요?')) return;
+    NOTE_ED = null;
+    showScreen('noteScreen');
+    renderNoteList();
+  }
+
+  /* 날짜·교시를 바꾸면 그 교시에 쓴 기록을 불러와요 */
+  function loadNoteToEditor() {
+    const n = findNote(NOTE_ED.date, NOTE_ED.period);
+    NOTE_ED.subject = n ? n.subject : null;
+    renderNoteEditor(n);
+  }
+
+  function noteMove(kind, v) {
+    if (noteDirty() && !confirm('저장하지 않은 내용이 있어요. 다른 교시로 옮길까요?')) return;
+    if (kind === 'day') {
+      const next = addDays(NOTE_ED.date, v);
+      if (next > NOTES.today || daysBetweenKeys(next, NOTES.today) > NOTES.rules.pastDays) return;
+      NOTE_ED.date = next;
+    } else NOTE_ED.period = v;
+    loadNoteToEditor();
+  }
+
+  function daysBetweenKeys(a, b) { return Math.round((fromKey(b) - fromKey(a)) / 86400000); }
+
+  function pickNoteSubject(s) {
+    NOTE_ED.subject = s;
+    document.querySelectorAll('#sjPick button').forEach(b => b.classList.toggle('on', b.dataset.s === s));
+  }
+
+  function renderNoteEditor(n) {
+    const R = NOTES.rules, E = NOTE_ED, today = NOTES.today;
+    $('noteEdTitle').textContent = n ? '배움 노트 고치기' : '배움 노트 쓰기';
+    const dayNotes = NOTES.notes.filter(x => x.date === E.date);
+    let pd = '';
+    for (let p = 1; p <= R.periods; p++) {
+      const x = dayNotes.find(y => y.period === p);
+      pd += `<button class="${p === E.period ? 'on' : x ? 'has' : ''}" onclick="noteMove('period', ${p})">${p}<small>${x ? esc(x.subject) : '교시'}</small></button>`;
+    }
+    const sj = R.subjects.map(s => `<button data-s="${s}" class="${E.subject === s ? 'on' : ''}" style="${sjStyle(s)}" onclick="pickNoteSubject('${s}')">${s}</button>`).join('');
+    const ta = (id, ic, label, ph, v) => `
+      <div class="ed-label">${ic} ${label}${id === 'ntWonder' && v ? ` <button class="inq-from" onclick="inquireFromNote()">🔍 이 궁금증 탐구하기</button>` : ''}</div>
+      <textarea class="nt-text" id="${id}" maxlength="${R.maxLen}" placeholder="${ph}" oninput="updateNoteCount()">${esc(v || '')}</textarea>`;
+    $('noteEdBody').innerHTML = `
+      <div class="date-nav">
+        <button onclick="noteMove('day', -1)" ${daysBetweenKeys(E.date, today) >= R.pastDays ? 'disabled' : ''}>◀</button>
+        <b>${fmtDay(E.date)}${E.date === today ? ' · 오늘' : ''}</b>
+        <button onclick="noteMove('day', 1)" ${E.date >= today ? 'disabled' : ''}>▶</button>
+      </div>
+      <div class="panel">
+        <div class="ed-label">⏰ 교시</div>
+        <div class="pd-pick">${pd}</div>
+        <div class="ed-label">📚 과목</div>
+        <div class="sj-pick" id="sjPick">${sj}</div>
+        ${ta('ntLearned', '💡', '알게 된 것', '예) 분수의 덧셈은 분모를 같게 만든 다음 분자끼리 더한다.', n && n.learned)}
+        ${ta('ntWonder', '❓', '궁금한 것', '예) 분모가 다른 분수는 왜 바로 더할 수 없을까?', n && n.wonder)}
+        ${ta('ntFelt', '💭', '느낀 것', '예) 처음엔 어려웠는데 그림으로 그려 보니 이해가 됐다.', n && n.felt)}
+        <div class="nt-count" id="ntCount"></div>
+        <div class="btn-row"><button class="btn primary" id="ntSave" onclick="saveNoteNow()">${n ? '고친 내용 저장' : '📒 기록하기'}</button></div>
+      </div>
+      ${n && n.feedback ? `<div class="panel"><div class="field-label">👩‍🏫 선생님 피드백</div><div class="nt-fb" style="margin-top:0">${esc(n.feedback)}</div></div>` : ''}`;
+    updateNoteCount();
+  }
+
+  function updateNoteCount() {
+    const box = $('ntCount');
+    if (!box || !NOTE_ED) return;
+    const R = NOTES.rules, E = NOTE_ED;
+    const n = findNote(E.date, E.period);
+    const len = noteLen($('ntLearned').value, $('ntWonder').value, $('ntFelt').value);
+    let msg = `✏️ ${len}자 (띄어쓰기 빼고)`, cls = 'nt-count';
+    if (n && n.yaho) { msg += ` · 이 교시는 ${n.yaho}야호를 받았어요 ✓`; cls += ' got'; }
+    else if (E.date !== NOTES.today) msg += ' · 지난 날은 야호 없이 기록만 돼요';
+    else if (len < R.minLen) msg += ` · ${R.minLen - len}자 더 쓰면 🪙 ${R.reward}야호`;
+    else { msg += ` · 🪙 +${R.reward}야호`; cls += ' ok'; }
+    box.textContent = msg;
+    box.className = cls;
+  }
+
+  function saveNoteNow() {
+    if (noteBusy) return;
+    const E = NOTE_ED;
+    const L = $('ntLearned').value, W = $('ntWonder').value, F = $('ntFelt').value;
+    if (!E.subject) { toast('과목을 골라 주세요'); return; }
+    if (!L.trim() && !W.trim() && !F.trim()) { toast('알게 된 것, 궁금한 것, 느낀 것 중 하나는 써 주세요'); return; }
+    noteBusy = true;
+    $('ntSave').disabled = true;
+    showLoading(true);
+    google.script.run
+      .withSuccessHandler(res => {
+        noteBusy = false;
+        showLoading(false);
+        if (!res.ok) {
+          if ($('ntSave')) $('ntSave').disabled = false;
+          res.reason === 'auth' ? authExpired() : toast(res.message);
+          return;
+        }
+        NOTES = res;
+        const s = res.saved;
+        toast(s.yaho ? `📒 ${s.period}교시 기록 완료! +${s.yaho}야호` : s.edited ? '📒 고친 내용을 저장했어요' : '📒 기록했어요');
+        if (s.yaho) fetchDashboard(false);
+        // 오늘 기록이면 다음 빈 교시로 넘어갈 수 있게 목록으로 돌아가요
+        NOTE_ED = null;
+        showScreen('noteScreen');
+        renderNoteList();
+      })
+      .withFailureHandler(err => { noteBusy = false; if ($('ntSave')) $('ntSave').disabled = false; onError(err); })
+      .saveNote(TOKEN, E.date, E.period, E.subject, L, W, F);
+  }
+
+  /* 궁금한 것 → 질문 탐구 새 대화로 */
+  function inquireFromNote() {
+    const q = ($('ntWonder').value || '').trim();
+    if (!q) return;
+    if (noteDirty() && !confirm('저장하지 않은 내용이 있어요. 탐구로 넘어갈까요?')) return;
+    NOTE_ED = null;
+    openInq(null);
+    $('qInput').value = q.slice(0, 300);
+    autoGrow.call($('qInput'));
+  }
+
+  /* 선생님: 기록 보기 + 피드백 */
+  function renderNoteView() {
+    const n = NOTE_ED.note;
+    $('noteEdTitle').textContent = `${n.num}번 ${n.name}`;
+    const block = (ic, label, t) => `<div class="ed-label">${ic} ${label}</div><div class="nt-line" style="margin:0 2px">${t ? esc(t) : '<span style="color:var(--faint)">(안 썼어요)</span>'}</div>`;
+    $('noteEdBody').innerHTML = `
+      <div class="panel">
+        <div class="hd" style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <b style="font-size:16px">${fmtDay(n.date)} · ${n.period}교시</b>
+          <span class="tag" style="${sjStyle(n.subject)};background:var(--sc);color:var(--sf)">${esc(n.subject)}</span>
+          ${n.yaho ? `<span class="tag" style="margin-left:auto;background:#fff4d6;color:#b37400">🪙 +${n.yaho}</span>` : ''}
+        </div>
+        ${block('💡', '알게 된 것', n.learned)}${block('❓', '궁금한 것', n.wonder)}${block('💭', '느낀 것', n.felt)}
+        <p class="updated" style="text-align:left;margin-top:12px">마지막 수정 ${esc(n.updated)}</p>
+      </div>
+      <div class="panel">
+        <div class="field-label">👩‍🏫 피드백 <span>학생에게 보여요</span></div>
+        <textarea class="nt-text" id="ntFb" maxlength="500" placeholder="칭찬이나 생각해 볼 질문을 남겨 주세요">${esc(n.feedback)}</textarea>
+        <div class="btn-row"><button class="btn primary" id="ntFbSave" onclick="saveNoteFeedback()">피드백 저장</button></div>
+      </div>`;
+  }
+
+  function saveNoteFeedback() {
+    const n = NOTE_ED.note;
+    const text = $('ntFb').value.trim();
+    $('ntFbSave').disabled = true;
+    showLoading(true);
+    google.script.run
+      .withSuccessHandler(res => {
+        showLoading(false);
+        if ($('ntFbSave')) $('ntFbSave').disabled = false;
+        if (!res.ok) { res.reason === 'auth' ? authExpired() : toast(res.message); return; }
+        const i = NOTES.notes.findIndex(x => x.id === n.id);
+        if (i >= 0) NOTES.notes[i] = res.note;
+        const j = (NOTES.cloudNotes || []).findIndex(x => x.id === n.id);
+        if (j >= 0) NOTES.cloudNotes[j] = res.note;
+        NOTE_ED.note = res.note;
+        toast(text ? '피드백을 저장했어요' : '피드백을 지웠어요');
+      })
+      .withFailureHandler(err => { if ($('ntFbSave')) $('ntFbSave').disabled = false; onError(err); })
+      .setNoteFeedback(TOKEN, n.id, text);
   }
 
   /* ---------- 공통 ---------- */
