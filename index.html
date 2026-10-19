@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#3f9b4b">
-  <title>오이쉬앱</title>
+  <title>나의 클래스크 · 오이쉬반</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥒</text></svg>">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
   <style>
@@ -641,6 +641,92 @@
     .back-chip { display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 14px; border-radius: 99px; background: var(--card); box-shadow: var(--shadow); font-size: 14px; font-weight: 800; color: var(--sub); margin-bottom: 14px; }
     @media (max-width: 400px) { .sj-pick { grid-template-columns: repeat(4, 1fr); } }
 
+    /* ---------- 명예의 전당 뱃지 ---------- */
+    .hof-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
+    .hof-item { background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 14px 6px 12px; text-align: center; position: relative; }
+    .hof-item:active { transform: scale(.97); }
+    .hof-item .nm { display: block; font-size: 14px; font-weight: 800; margin-top: 12px; white-space: nowrap; }
+    .hof-item .sub { display: block; font-size: 11px; color: var(--faint); font-weight: 700; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; }
+    .hof-item .cnt { position: absolute; top: 8px; right: 8px; background: var(--ink); color: #fff; font-size: 11px; font-weight: 800; border-radius: 99px; padding: 2px 7px; }
+    .hof-item.new::after { content: 'NEW'; position: absolute; top: 8px; left: 8px; background: var(--down); color: #fff; font-size: 10px; font-weight: 800; border-radius: 99px; padding: 2px 6px; }
+    .hof-empty { background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 20px; text-align: center; color: var(--sub); font-size: 14px; font-weight: 700; }
+    .medal { --b: #c9a000; --l: #fff4c2; position: relative; width: 66px; height: 66px; margin: 0 auto; }
+    .medal .rib { position: absolute; bottom: -10px; width: 16px; height: 26px; background: var(--b); opacity: .85; }
+    .medal .rib.l { left: 15px; transform: rotate(18deg); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%); }
+    .medal .rib.r { right: 15px; transform: rotate(-18deg); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%); }
+    .medal .disc { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #fff 0%, var(--l) 38%, color-mix(in srgb, var(--b) 45%, var(--l)) 100%);
+      border: 4px solid var(--b); box-shadow: 0 4px 10px color-mix(in srgb, var(--b) 35%, transparent), inset 0 0 0 3px rgba(255,255,255,.7);
+      display: grid; place-items: center; font-size: 30px; }
+    .medal.sm { width: 40px; height: 40px; }
+    .medal.sm .disc { border-width: 3px; font-size: 18px; box-shadow: inset 0 0 0 2px rgba(255,255,255,.7); }
+    .medal.sm .rib { width: 10px; height: 16px; bottom: -7px; }
+    .medal.sm .rib.l { left: 9px; } .medal.sm .rib.r { right: 9px; }
+    .hof-list-item { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-top: 1px solid var(--line); }
+    .hof-list-item:first-child { border-top: none; }
+    .hof-list-item .tx { flex: 1; min-width: 0; }
+    .hof-list-item .tt { font-size: 15px; font-weight: 800; }
+    .hof-list-item .tt span { font-size: 12px; color: var(--faint); font-weight: 700; margin-left: 6px; }
+    .hof-list-item p { font-size: 15px; line-height: 1.5; margin-top: 3px; word-break: break-word; }
+    .hof-list-item .yh { font-size: 12px; font-weight: 800; color: #b37400; white-space: nowrap; }
+    .hof-list-item .del { font-size: 18px; padding: 4px; opacity: .6; }
+    .bd-pick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .bd-pick button { border-radius: 16px; background: var(--bg); padding: 10px 2px 8px; text-align: center; border: 2px solid transparent; }
+    .bd-pick button b { display: block; font-size: 12px; font-weight: 800; margin-top: 10px; white-space: nowrap; color: var(--sub); }
+    .bd-pick button.on { border-color: var(--ink); background: var(--card); }
+    .bd-pick button.on b { color: var(--ink); }
+    .st-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 6px; }
+    .st-pick button { height: 40px; border-radius: 12px; background: var(--bg); font-size: 14px; font-weight: 800; color: var(--sub); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; }
+    .st-pick button small { color: var(--faint); margin-right: 3px; }
+    .st-pick button.on { background: var(--brand); color: #fff; }
+    .st-pick button.on small { color: rgba(255,255,255,.8); }
+    .mini-btn { font-size: 13px; font-weight: 800; color: var(--sub); background: var(--bg); border-radius: 99px; padding: 5px 12px; }
+
+    /* ---------- 타자 ---------- */
+    .tp-modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    .tp-mode { background: var(--card); border-radius: 20px; box-shadow: var(--shadow); padding: 16px 10px; text-align: center; }
+    .tp-mode i { display: block; font-style: normal; font-size: 30px; }
+    .tp-mode b { display: block; font-size: 16px; font-weight: 800; margin-top: 6px; white-space: nowrap; }
+    .tp-mode span { display: block; font-size: 12px; color: var(--sub); font-weight: 700; margin-top: 3px; }
+    .tp-mode:disabled { opacity: .45; }
+    .tp-mode.ch { background: linear-gradient(135deg, #4d52b0, #7b5cd1); color: #fff; }
+    .tp-mode.ch span { color: rgba(255,255,255,.85); }
+    .tp-today { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+    .tp-today div { background: rgba(255,255,255,.55); border-radius: 12px; padding: 8px 4px; text-align: center; font-size: 12px; font-weight: 800; }
+    .tp-today div b { display: block; font-size: 15px; margin-top: 2px; }
+    .tp-today div.ok { background: #fff; color: var(--brand); }
+    .rank-row { display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-top: 1px solid var(--line); }
+    .rank-row:first-child { border-top: none; }
+    .rank-row .rk { width: 30px; text-align: center; font-size: 16px; font-weight: 800; color: var(--sub); }
+    .rank-row .nm { flex: 1; font-size: 15px; font-weight: 800; }
+    .rank-row .nm small { color: var(--faint); margin-right: 4px; }
+    .rank-row .cp { font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .rank-row .cp small { font-size: 12px; color: var(--sub); margin-left: 2px; }
+    .rank-row.me { background: var(--brand-soft); border-radius: 12px; border-top-color: transparent; }
+    .rank-row.me + .rank-row { border-top-color: transparent; }
+    .tp-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+    .tp-bar div { background: var(--card); border-radius: 16px; box-shadow: var(--shadow); padding: 10px; text-align: center; font-size: 12px; font-weight: 800; color: var(--sub); }
+    .tp-bar div b { display: block; font-size: 24px; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -0.5px; }
+    .tp-bar div b.warn { color: var(--down); }
+    .tp-target { background: var(--card); border-radius: 20px; box-shadow: var(--shadow); padding: 18px; font-size: 22px; line-height: 1.75; letter-spacing: .5px; word-break: keep-all; overflow-wrap: anywhere; max-height: 300px; overflow-y: auto; margin-bottom: 12px; user-select: none; }
+    .tp-target.short { font-size: 26px; text-align: center; }
+    .tp-target span.ok { color: var(--brand); }
+    .tp-target span.bad { color: #fff; background: var(--down); border-radius: 4px; }
+    .tp-target span.cur { border-bottom: 3px solid var(--ink); }
+    .tp-target span.rest { color: #9aa29a; }
+    .tp-input { width: 100%; min-height: 64px; resize: none; border-radius: 18px; border: 3px solid var(--line); background: #fff; padding: 14px 16px; font-family: inherit; font-size: 22px; line-height: 1.5; outline: none; }
+    .tp-input:focus { border-color: var(--brand); }
+    .tp-input:disabled { background: var(--bg); }
+    .tp-last { text-align: center; font-size: 14px; font-weight: 800; color: var(--sub); margin: 0 0 10px; min-height: 20px; }
+    .tp-last.ok { color: var(--brand); }
+    .tp-result { background: var(--card); border-radius: 24px; box-shadow: var(--shadow); padding: 22px 18px; text-align: center; margin-bottom: 14px; }
+    .tp-result .big { font-size: 46px; font-weight: 800; letter-spacing: -1px; }
+    .tp-result .big small { font-size: 18px; color: var(--sub); margin-left: 4px; }
+    .tp-result .sub { font-size: 15px; font-weight: 700; color: var(--sub); margin-top: 4px; }
+    .tp-result .msg { margin-top: 14px; font-size: 15px; font-weight: 800; border-radius: 14px; padding: 10px; background: var(--bg); }
+    .tp-result .msg.got { background: #fff4d6; color: #8a6200; }
+    .tp-result .msg.best { background: linear-gradient(135deg, #ffe58a, #ffc94a); color: #6d4d00; }
+    .tp-tip { font-size: 12px; color: var(--faint); font-weight: 700; text-align: center; margin-top: 8px; }
+
     /* ---------- 공통 ---------- */
     .loading { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(243,246,239,.7); z-index: 30; }
     .loading.show { display: flex; }
@@ -720,6 +806,12 @@
     <div class="cmp-msg" id="cmpMsg" style="margin-bottom:12px"></div>
     <div class="cards" id="cards"></div>
 
+
+    <div class="sec-title" style="margin-top:26px">
+      <h2>🏅 나의 명예의 전당</h2>
+      <span id="hofSub"></span>
+    </div>
+    <div id="hofWrap"></div>
 
     <p class="updated" id="updated"></p>
   </section>
@@ -823,6 +915,41 @@
     <div id="noteEdBody"></div>
   </section>
 
+  <!-- 타자 연습 -->
+  <section class="screen" id="typeScreen">
+    <div class="top">
+      <div class="who">
+        <h1 id="typeHeadTitle">⌨️ 타자 연습</h1>
+        <p id="typeHeadSub">정확하게, 그리고 조금씩 빠르게!</p>
+      </div>
+      <button class="icon-btn" onclick="loadTyping(true)" title="새로고침">🔄</button>
+      <button class="icon-btn text" id="typeOut" style="display:none" onclick="doLogout()">나가기</button>
+    </div>
+    <div id="typeList"></div>
+  </section>
+
+  <!-- 타자 치는 화면 -->
+  <section class="screen" id="typePlayScreen">
+    <div class="top">
+      <button class="icon-btn" onclick="closeTypePlay()">←</button>
+      <div class="d-title" id="tpTitle">타자 연습</div>
+    </div>
+    <div id="tpBody"></div>
+  </section>
+
+  <!-- 선생님: 명예의 전당 -->
+  <section class="screen" id="hofScreen">
+    <div class="top">
+      <div class="who">
+        <h1>🏅 명예의 전당</h1>
+        <p>학생에게 뱃지와 야호를 줘요</p>
+      </div>
+      <button class="icon-btn" onclick="loadHof(true)" title="새로고침">🔄</button>
+      <button class="icon-btn text" onclick="doLogout()">나가기</button>
+    </div>
+    <div id="hofBody"></div>
+  </section>
+
   <!-- 과제 상세 -->
   <section class="screen" id="hwDetailScreen">
     <div class="top">
@@ -838,12 +965,22 @@
 <nav class="nav" id="nav">
   <div class="in">
     <button id="tabHome" onclick="goTab('home')"><i>🏠</i>홈</button>
+    <button id="tabHof" onclick="goTab('hof')" style="display:none"><i>🏅</i>명예</button>
     <button id="tabHw" onclick="goTab('hw')"><i>📝</i>과제<span class="dot" id="hwDot" style="display:none"></span></button>
     <button id="tabInq" onclick="goTab('inq')"><i>🔍</i>질문</button>
     <button id="tabBook" onclick="goTab('book')"><i>📚</i>독서</button>
     <button id="tabNote" onclick="goTab('note')"><i>📒</i>배움</button>
+    <button id="tabType" onclick="goTab('type')"><i>⌨️</i>타자</button>
   </div>
 </nav>
+
+<!-- 뱃지 자세히 보기 -->
+<div class="overlay" id="hofSheet" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="sheet form-sheet">
+    <div id="hofSheetBody"></div>
+    <button class="cancel" onclick="$('hofSheet').classList.remove('show')">닫기</button>
+  </div>
+</div>
 
 <!-- 책 등록 / 고치기 -->
 <div class="overlay" id="bookForm">
@@ -965,14 +1102,15 @@
     leftover:   { title: '잔반',   icon: '🍱', color: '#e0703a' },
     inquiry:    { title: '질문',   icon: '🔍', color: '#3b5bdb', tab: 'inq' },
     reading:    { title: '독서',   icon: '📚', color: '#c2581b', tab: 'book' },
-    note:       { title: '배움',   icon: '📒', color: '#b8860b', tab: 'note' }
+    note:       { title: '배움',   icon: '📒', color: '#b8860b', tab: 'note' },
+    typing:     { title: '타자',   icon: '⌨️', color: '#4d52b0', tab: 'type' }
   };
   const ECO_LABELS = { '반짝이는활동': '반짝' };   // 화면에 보이는 이름
   const ecoLabel = c => ECO_LABELS[c] || c || '기타';
   const ECO_ICONS = {
     '출석체크': '✅', '우유체크': '🥛', '양치체크': '🪥', '운동체크': '🚶',
     '반짝이는활동': '✨', '잔반 다 먹음': '🍱', '질문 탐구 정리': '🔍',
-    '독서 기록': '📖', '책 다 읽음': '📚', '배움 노트': '📒'
+    '독서 기록': '📖', '책 다 읽음': '📚', '배움 노트': '📒', '타자 연습': '⌨️', '명예의 전당': '🏅', '명예의 전당 취소': '↩️'
   };
   const STORE_KEY = 'classk_my_token';
   const DOW = ['일', '월', '화', '수', '목', '금', '토'];
@@ -1046,7 +1184,7 @@
 
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
-    const nav = ['homeScreen', 'hwScreen', 'inqScreen', 'bookScreen', 'noteScreen'].includes(id);
+    const nav = ['homeScreen', 'hwScreen', 'inqScreen', 'bookScreen', 'noteScreen', 'typeScreen', 'hofScreen'].includes(id);
     $('nav').style.display = nav ? 'block' : 'none';
     document.body.classList.toggle('has-nav', nav);
     $('tabHome').style.display = TEACHER ? 'none' : '';
@@ -1055,6 +1193,9 @@
     $('tabInq').classList.toggle('on', id === 'inqScreen');
     $('tabBook').classList.toggle('on', id === 'bookScreen');
     $('tabNote').classList.toggle('on', id === 'noteScreen');
+    $('tabType').classList.toggle('on', id === 'typeScreen');
+    $('tabHof').classList.toggle('on', id === 'hofScreen');
+    $('tabHof').style.display = TEACHER ? '' : 'none';
     document.body.classList.toggle('book-open', id === 'bookDetailScreen');
     updateChatBar(id);
     window.scrollTo(0, 0);
@@ -1251,7 +1392,11 @@
       $('noteOut').style.display = 'none';
       $('noteHeadTitle').textContent = '📒 배움 노트';
       $('noteHeadSub').textContent = '수업마다 배운 것을 기록해요';
+      $('typeOut').style.display = 'none';
+      $('typeHeadTitle').textContent = '⌨️ 타자 연습';
+      $('typeHeadSub').textContent = '정확하게, 그리고 조금씩 빠르게!';
     }
+    TYPE = null; HOF = null; stopTyping();
     NOTES = null; NOTE_ED = null; noteTDate = null; noteTStu = null; noteView = 'date'; noteSubj = null; noteWord = null; noteCloudSubj = null;
     BOOKS = null;
     BOOKD = null;
@@ -1335,6 +1480,10 @@
       }
       case 'note':
         return { pre: '기록', big: list.length, unit: '교시', sub: latest ? `${latest.period}교시 ${latest.text} · ${fmtShort(latest.d)}` : recent };
+      case 'typing': {
+        const best = list.filter(r => r.kind === '도전').reduce((a, r) => Math.max(a, r.cpm), 0);
+        return { pre: '도전 최고', big: best, unit: '타', sub: latest ? `${latest.kind} ${latest.cpm}타 · ${latest.acc}%` : recent };
+      }
       default:
         return { big: list.length, unit: '번', sub: recent };
     }
@@ -1397,6 +1546,7 @@
 
     renderHwBanner();
     renderCompare();
+    renderMyHof();
     $('updated').textContent = `${DATA.updated} 기준 · 🔄를 누르면 새로 불러와요`;
   }
 
@@ -1412,7 +1562,8 @@
     leftover:   { label: '잔반', desc: '잔반을 다 먹은 횟수',   higher: true, val: l => l.filter(r => r.clean).length },
     inquiry:    { label: '질문', desc: 'AI 도우미에게 한 질문 수', higher: true, val: l => l.length },
     reading:    { label: '독서', desc: '읽은 쪽수',              higher: true, val: l => l.reduce((a, r) => a + (r.pages || 0), 0) },
-    note:       { label: '배움', desc: '배움 노트를 쓴 교시 수',  higher: true, val: l => l.length }
+    note:       { label: '배움', desc: '배움 노트를 쓴 교시 수',  higher: true, val: l => l.length },
+    typing:     { label: '타자', desc: '타자 연습을 한 횟수',     higher: true, val: l => l.length }
   };
 
   function inWeek(list, wk) { return list.filter(r => r.d >= wk[0] && r.d <= wk[4]); }
@@ -1545,6 +1696,10 @@
       s = [['읽은 쪽', pg(list), '쪽'], ['이번 달', pg(list.filter(r => r.d.startsWith(monthKey))), '쪽'], ['책', new Set(list.map(r => r.text)).size, '권']];
     } else if (key === 'note') {
       s = [['전체', list.length, '교시'], ['이번 달', inMonth, '교시'], ['이번 주', inWeek, '교시']];
+    } else if (key === 'typing') {
+      const best = list.filter(r => r.kind === '도전').reduce((a, r) => Math.max(a, r.cpm), 0);
+      const acc = list.length ? Math.round(list.slice(0, 20).reduce((a, r) => a + r.acc, 0) / Math.min(20, list.length)) : 0;
+      s = [['도전 최고', best, '타'], ['이번 달', inMonth, '판'], ['정확도', acc, '%']];
     } else {
       const unit = key === 'shine' ? '개' : '번';
       s = [['전체', list.length, unit], ['이번 달', inMonth, unit], ['이번 주', inWeek, unit]];
@@ -1647,6 +1802,11 @@
           if (r.memo) sub += ` · ${esc(r.memo)}`;
           right = '📒';
           break;
+        case 'typing':
+          main = `${esc(r.kind)} <span style="color:var(--sub);font-weight:700">${r.cpm}타</span>`;
+          sub += ` · 정확도 ${r.acc}%`;
+          right = r.best ? '🏆' : '⌨️';
+          break;
       }
       return `<div class="row">${date}<div class="r-main"><div class="r-title">${main}</div><div class="r-sub">${sub}</div></div><div class="r-right">${right}</div></div>`;
     }).join('');
@@ -1722,6 +1882,8 @@
     if (tab === 'inq') { showScreen('inqScreen'); loadInquiries(!INQ); return; }
     if (tab === 'book') { showScreen('bookScreen'); loadBooks(!BOOKS); return; }
     if (tab === 'note') { showScreen('noteScreen'); loadNotes(!NOTES); return; }
+    if (tab === 'type') { showScreen('typeScreen'); loadTyping(!TYPE); return; }
+    if (tab === 'hof') { showScreen('hofScreen'); loadHof(!HOF); return; }
     showScreen('hwScreen');
     loadHomework(!HW);
   }
@@ -2736,6 +2898,10 @@
     $('noteHeadTitle').textContent = '👩‍🏫 배움 노트 보기';
     $('noteHeadSub').textContent = '날짜별로 학생들의 배움 기록을 확인해요';
     NOTES = null; noteTDate = null; noteTStu = null;
+    $('typeOut').style.display = 'grid';
+    $('typeHeadTitle').textContent = '👩‍🏫 타자 기록 보기';
+    $('typeHeadSub').textContent = '학생별 타수와 정확도, 1분 도전 순위';
+    TYPE = null; HOF = null;
     HW = null;
     INQ = null;
     BOOKS = null;
@@ -2851,6 +3017,8 @@
     else if (id === 'bookScreen' && BOOKS) renderBookList();
     else if (id === 'noteEditScreen' && NOTE_ED) { NOTE_ED = null; showScreen('noteScreen'); if (NOTES) renderNoteList(); }
     else if (id === 'noteScreen' && NOTES) renderNoteList();
+    else if (id === 'typeScreen' && TYPE) renderTypeList();
+    else if (id === 'typePlayScreen') closeTypePlay(true);
   }
 
   /* =================================================================
@@ -3651,6 +3819,515 @@
       })
       .withFailureHandler(err => { if ($('ntFbSave')) $('ntFbSave').disabled = false; onError(err); })
       .setNoteFeedback(TOKEN, n.id, text);
+  }
+
+  /* =================================================================
+     명예의 전당 (뱃지)
+     ================================================================= */
+  const BADGE_STYLE = {
+    '놀이왕':     { e: '🤸', b: '#5fae3a', l: '#e6f6d8' },
+    '배움왕':     { e: '💡', b: '#2f6fc4', l: '#e2edfb' },
+    '타자왕':     { e: '⌨️', b: '#4d52b0', l: '#e6e7f8' },
+    '표현왕':     { e: '🎤', b: '#8a4bc4', l: '#f1e6fb' },
+    '독서왕':     { e: '📚', b: '#e07a1f', l: '#fdeedd' },
+    '환경지킴이': { e: '🌱', b: '#2b8a4b', l: '#dff3e6' }
+  };
+  /* 선생님이 직접 쓴 뱃지: 이름 글자로 그림을 고르고, 색은 이름마다 다르게 */
+  const CUSTOM_EMOJI = [
+    [['친절', '배려', '도움', '도와', '나눔'], '🤝'], [['노력', '끈기', '최선', '도전'], '💪'], [['웃음', '긍정', '행복', '밝은'], '😄'],
+    [['리더', '반장', '회장', '이끔', '대표'], '👑'], [['수학', '계산'], '🧮'], [['과학', '실험', '탐구'], '🔬'], [['발표', '말하기'], '🎤'],
+    [['음악', '노래', '악기', '리코더'], '🎵'], [['미술', '그림', '만들기'], '🎨'], [['운동', '체육', '달리기', '축구', '줄넘기'], '⚽'],
+    [['정리', '청소', '깔끔'], '🧹'], [['인사', '예절', '바른'], '🙇'], [['글', '일기', '작가'], '✍️'], [['코딩', '컴퓨터', '로봇'], '🤖'],
+    [['요리', '급식', '편식'], '🍚'], [['출석', '지각', '성실', '꾸준'], '⏰'], [['우정', '친구', '사이'], '💞'], [['아이디어', '창의', '발명'], '💡'],
+    [['안전', '지킴'], '🛡️'], [['영어'], '🔤'], [['사회', '역사', '지도'], '🗺️']
+  ];
+  const CUSTOM_COLORS = [['#c9a000', '#fff4c2'], ['#d0567a', '#fde6ee'], ['#1d8a91', '#dff4f5'], ['#b8630a', '#fdeedd'],
+    ['#6b4fc4', '#ece6fb'], ['#3b7d2a', '#e4f3dc'], ['#c43d3d', '#fde4e4'], ['#2f6fc4', '#e2edfb']];
+  function badgeStyle(name) {
+    if (BADGE_STYLE[name]) return BADGE_STYLE[name];
+    const hit = CUSTOM_EMOJI.find(([words]) => words.some(w => name.indexOf(w) >= 0));
+    const col = CUSTOM_COLORS[hashStr(name) % CUSTOM_COLORS.length];
+    return { e: hit ? hit[1] : '🌟', b: col[0], l: col[1] };
+  }
+  let HOF = null;            // 선생님 입력 화면 데이터
+  let hofPick = { nums: [], badge: null, custom: false };
+
+  /* 메달 모양 뱃지 (뱃지마다 그림·색이 달라요) */
+  function medalHtml(badge, small) {
+    const st = badgeStyle(String(badge || ''));
+    return `<div class="medal ${small ? 'sm' : ''}" style="--b:${st.b};--l:${st.l}">
+      <i class="rib l"></i><i class="rib r"></i><div class="disc">${st.e}</div></div>`;
+  }
+
+  /* 홈: 나의 명예의 전당 (뱃지 종류별로 묶고 ×횟수) */
+  function renderMyHof() {
+    const list = DATA.hof || [];
+    $('hofSub').textContent = list.length ? `뱃지 ${list.length}개` : '';
+    if (!list.length) {
+      $('hofWrap').innerHTML = `<div class="hof-empty">${medalHtml('🌟', true)}<div style="margin-top:14px">아직 받은 뱃지가 없어요.<br>첫 뱃지에 도전해 봐요 ✨</div></div>`;
+      return;
+    }
+    const groups = [];
+    list.forEach(h => {          // 최근 받은 뱃지가 앞에 와요
+      let g = groups.find(x => x.badge === h.badge);
+      if (!g) groups.push(g = { badge: h.badge, items: [] });
+      g.items.push(h);
+    });
+    const weekAgo = toKey(new Date(fromKey(DATA.today).getTime() - 6 * 86400000));
+    HOF_GROUPS = groups;
+    $('hofWrap').innerHTML = `<div class="hof-grid">${groups.map((g, gi) => {
+      const latest = g.items[0];
+      return `<button class="hof-item ${latest.date >= weekAgo ? 'new' : ''}" onclick="openHofBadge(${gi})">
+        ${g.items.length > 1 ? `<span class="cnt">×${g.items.length}</span>` : ''}
+        ${medalHtml(g.badge)}
+        <span class="nm">${esc(g.badge)}</span>
+        <span class="sub">${fmtShort(latest.date)}</span>
+      </button>`;
+    }).join('')}</div>`;
+  }
+
+  let HOF_GROUPS = [];
+  function openHofBadge(gi) {
+    const badge = HOF_GROUPS[gi].badge;
+    const items = HOF_GROUPS[gi].items;
+    $('hofSheetBody').innerHTML = `
+      <div style="text-align:center;margin:6px 0 18px">${medalHtml(badge)}<h2 style="margin-top:16px">${esc(badge)}</h2>
+        <p class="hint">${items.length}번 받았어요</p></div>
+      <div>${items.map(h => `
+        <div class="hof-list-item">
+          <div class="tx"><div class="tt">${fmtDay(h.date)}</div><p>${esc(h.text)}</p></div>
+          ${h.yaho ? `<span class="yh">🪙 +${h.yaho}</span>` : ''}
+        </div>`).join('')}</div>`;
+    $('hofSheet').classList.add('show');
+  }
+
+  /* ---------- 선생님: 명예의 전당 입력 ---------- */
+  function loadHof(withLoading) {
+    if (withLoading) showLoading(true);
+    google.script.run
+      .withSuccessHandler(res => {
+        showLoading(false);
+        if (!res.ok) { res.reason === 'auth' ? authExpired() : toast(res.message); return; }
+        HOF = res;
+        renderHof();
+      })
+      .withFailureHandler(onError)
+      .getHof(TOKEN);
+  }
+
+  function renderHof(keep) {
+    const H = HOF;
+    const prev = keep ? { date: $('hfDate').value, text: $('hfText').value, yaho: $('hfYaho').value, cb: $('hfBadgeName') ? $('hfBadgeName').value : '' } : null;
+    const studentBtns = H.students.map(s => `<button class="${hofPick.nums.includes(s.num) ? 'on' : ''}" onclick="toggleHofStudent(${s.num})"><small>${s.num}</small>${esc(s.name)}</button>`).join('');
+    const opts = H.badges.concat(H.customBadges || []);
+    const badgeBtns = opts.map(b => `<button class="${!hofPick.custom && hofPick.badge === b ? 'on' : ''}" onclick="pickHofBadge('${esc(b).replace(/'/g, "\\'")}')">${medalHtml(b, true)}<b>${esc(b)}</b></button>`).join('')
+      + `<button class="${hofPick.custom ? 'on' : ''}" onclick="pickHofCustom()"><div class="medal sm" style="--b:#a3ab9f;--l:#f3f6ef"><i class="rib l"></i><i class="rib r"></i><div class="disc">✏️</div></div><b>직접 쓰기</b></button>`;
+    const customVal = prev && prev.cb ? prev.cb : (hofPick.custom ? hofPick.badge || '' : '');
+    $('hofBody').innerHTML = `
+      <div class="panel">
+        <div class="ed-label">📅 날짜</div>
+        <input class="bk-input" id="hfDate" type="date" value="${esc(prev ? prev.date : H.today)}" max="${H.today}">
+        <div class="ed-label">🙋 학생 <span><button class="mini-btn" onclick="hofAll(true)">모두</button> <button class="mini-btn" onclick="hofAll(false)">해제</button></span></div>
+        <div class="st-pick">${studentBtns}</div>
+        <div class="ed-label">🏅 뱃지</div>
+        <div class="bd-pick">${badgeBtns}</div>
+        ${hofPick.custom ? `<div style="display:flex;align-items:center;gap:12px;margin-top:12px">
+          <div id="hfPreview">${medalHtml(customVal || '🌟', true)}</div>
+          <input class="bk-input" id="hfBadgeName" maxlength="${H.badgeMax || 10}" placeholder="뱃지 이름 (예: 친절왕, 노력상)" value="${esc(customVal)}" oninput="onHofCustomInput()" style="margin:0">
+        </div><p class="updated" style="text-align:left;margin-top:6px">이름에 '친절', '노력', '수학' 같은 낱말이 있으면 그림이 바뀌어요</p>` : ''}
+        <div class="ed-label">✏️ 내용 <span>학생에게 보여요</span></div>
+        <textarea class="nt-text" id="hfText" maxlength="200" placeholder="예) 쉬는 시간에 새 놀이를 만들어 친구들과 함께했어요">${esc(prev ? prev.text : '')}</textarea>
+        <div class="ed-label">🪙 야호 <span>0이면 뱃지만 줘요</span></div>
+        <input class="bk-input" id="hfYaho" type="number" inputmode="numeric" min="0" max="10000" value="${esc(prev ? prev.yaho : H.defaultYaho)}">
+        <div class="btn-row"><button class="btn primary" id="hfSave" onclick="saveHof()">🏅 명예의 전당에 올리기${hofPick.nums.length ? ` (${hofPick.nums.length}명)` : ''}</button></div>
+      </div>
+      <div class="sec-title" style="margin-top:8px"><h2>최근 명예의 전당</h2><span>${H.items.length}개</span></div>
+      <div class="panel">${H.items.length ? H.items.map(h => `
+        <div class="hof-list-item">
+          ${medalHtml(h.badge, true)}
+          <div class="tx"><div class="tt">${h.num}번 ${esc(h.name)} · ${esc(h.badge)}<span>${fmtShort(h.date)}</span></div><p>${esc(h.text)}</p></div>
+          ${h.yaho ? `<span class="yh">🪙 ${h.yaho}</span>` : ''}
+          <button class="del" title="지우기" onclick="deleteHofItem('${esc(h.id)}')">🗑</button>
+        </div>`).join('') : '<div class="locked"><i>🏅</i>아직 명예의 전당 기록이 없어요</div>'}</div>`;
+  }
+
+  function toggleHofStudent(num) {
+    const i = hofPick.nums.indexOf(num);
+    if (i >= 0) hofPick.nums.splice(i, 1); else hofPick.nums.push(num);
+    renderHof(true);
+  }
+  function hofAll(on) { hofPick.nums = on ? HOF.students.map(s => s.num) : []; renderHof(true); }
+  function pickHofBadge(b) { hofPick.badge = b; hofPick.custom = false; renderHof(true); }
+  function pickHofCustom() { hofPick.custom = true; hofPick.badge = ''; renderHof(true); setTimeout(() => $('hfBadgeName') && $('hfBadgeName').focus(), 50); }
+  function onHofCustomInput() {
+    hofPick.badge = $('hfBadgeName').value.trim();
+    $('hfPreview').innerHTML = medalHtml(hofPick.badge || '🌟', true);
+  }
+
+  function saveHof() {
+    const text = $('hfText').value.trim(), yaho = $('hfYaho').value, date = $('hfDate').value;
+    if (!hofPick.nums.length) { toast('학생을 골라 주세요'); return; }
+    if (hofPick.custom) hofPick.badge = ($('hfBadgeName').value || '').trim();
+    if (!hofPick.badge) { toast(hofPick.custom ? '뱃지 이름을 써 주세요' : '뱃지를 골라 주세요'); return; }
+    if (!text) { toast('내용을 써 주세요'); return; }
+    const names = HOF.students.filter(s => hofPick.nums.includes(s.num)).map(s => s.name);
+    if (!confirm(`${names.join(', ')} 학생에게\n'${hofPick.badge}' 뱃지${Number(yaho) ? `와 ${yaho}야호` : ''}를 줄까요?`)) return;
+    $('hfSave').disabled = true;
+    showLoading(true);
+    google.script.run
+      .withSuccessHandler(res => {
+        showLoading(false);
+        if (!res.ok) { $('hfSave').disabled = false; res.reason === 'auth' ? authExpired() : toast(res.message); return; }
+        HOF = res;
+        hofPick = { nums: [], badge: null, custom: false };
+        renderHof();
+        toast(`🏅 ${res.saved.count}명에게 ${res.saved.badge} 뱃지를 줬어요`);
+      })
+      .withFailureHandler(err => { $('hfSave').disabled = false; onError(err); })
+      .addHof(TOKEN, hofPick.nums, hofPick.badge, text, yaho, date);
+  }
+
+  function deleteHofItem(id) {
+    const h = HOF.items.find(x => x.id === id);
+    if (!h || !confirm(`${h.name} 학생의 '${h.badge}' 기록을 지울까요?${h.yaho ? `\n준 ${h.yaho}야호도 되돌려요.` : ''}`)) return;
+    showLoading(true);
+    google.script.run
+      .withSuccessHandler(res => {
+        showLoading(false);
+        if (!res.ok) { res.reason === 'auth' ? authExpired() : toast(res.message); return; }
+        HOF = res;
+        renderHof(true);
+        toast('지웠어요');
+      })
+      .withFailureHandler(onError)
+      .deleteHof(TOKEN, id);
+  }
+
+  /* =================================================================
+     타자 연습
+     ================================================================= */
+  // 연습 글: 속담과 직접 쓴 문장이에요. 마음대로 더하거나 바꿔도 돼요.
+  const TYPE_SHORT = [
+    '가는 말이 고와야 오는 말이 곱다.', '낮말은 새가 듣고 밤말은 쥐가 듣는다.', '세 살 버릇 여든까지 간다.',
+    '천 리 길도 한 걸음부터.', '티끌 모아 태산.', '소 잃고 외양간 고친다.', '백지장도 맞들면 낫다.',
+    '원숭이도 나무에서 떨어진다.', '하늘이 무너져도 솟아날 구멍이 있다.', '열 번 찍어 안 넘어가는 나무 없다.',
+    '빈 수레가 요란하다.', '발 없는 말이 천 리 간다.', '등잔 밑이 어둡다.', '고생 끝에 낙이 온다.',
+    '콩 심은 데 콩 나고 팥 심은 데 팥 난다.', '우물을 파도 한 우물을 파라.', '배움에는 끝이 없다.',
+    '아는 길도 물어 가라.', '돌다리도 두들겨 보고 건너라.', '작은 고추가 맵다.', '시작이 반이다.',
+    '아침 햇살이 교실 창문으로 들어왔다.', '오늘 급식에는 맛있는 카레가 나왔다.', '친구와 함께 운동장을 두 바퀴 걸었다.',
+    '우리 반 화분에 새싹이 돋았다.', '비가 그치고 하늘에 무지개가 떴다.', '도서관에서 재미있는 책을 빌렸다.',
+    '쉬는 시간에 친구들과 공기놀이를 했다.', '선생님께서 오늘의 질문을 칠판에 쓰셨다.', '나는 매일 조금씩 자라고 있다.',
+    '고양이가 햇볕 아래에서 낮잠을 잔다.', '바람이 불자 나뭇잎이 춤을 추었다.', '수학 문제를 끝까지 풀어서 기뻤다.',
+    '우유를 마시고 양치를 깨끗이 했다.', '내일은 현장 체험 학습을 가는 날이다.', '꿀벌은 꽃가루를 옮겨 열매를 맺게 한다.',
+    '달은 스스로 빛을 내지 못한다.', '물은 영도에서 얼고 백도에서 끓는다.', '지구는 하루에 한 바퀴씩 돈다.',
+    '나무는 이산화탄소를 마시고 산소를 내놓는다.', '분리수거를 하면 지구가 웃는다.', '고마운 마음은 말로 전해야 한다.',
+    '실수해도 괜찮아, 다시 하면 돼.', '천천히 정확하게 치는 것이 먼저다.', '오늘 배운 것을 배움 노트에 적었다.',
+    '겨울이 오면 철새들이 남쪽으로 날아간다.', '동생과 함께 종이비행기를 접었다.', '할머니 댁 마당에 감나무가 있다.',
+    '우리 동네 시장은 언제나 북적인다.', '줄넘기 백 번에 도전해 보았다.', '봄에는 개나리와 진달래가 핀다.',
+    '친구의 말을 끝까지 들어 주자.', '책을 읽으면 새로운 세상이 열린다.', '모둠 친구들과 힘을 모아 발표를 준비했다.',
+    '자전거를 탈 때는 꼭 헬멧을 쓴다.', '저녁노을이 바다를 붉게 물들였다.', '작은 친절이 큰 기쁨이 된다.',
+    '키보드 위에 손가락을 가지런히 올려요.', '눈은 화면을 보고 손은 자리를 기억해요.', '꾸준히 연습하면 누구나 빨라진다.'
+  ];
+  const TYPE_LONG = [
+    '아침에 일어나 창문을 열었더니 시원한 바람이 들어왔다. 밤새 내린 비 덕분에 나뭇잎이 반짝반짝 빛났다. 나는 우산을 챙겨 학교로 걸어갔다. 웅덩이에 비친 하늘이 거울처럼 맑았다.',
+    '우리 반에는 작은 화분이 여섯 개 있다. 친구들이 돌아가며 물을 주고 햇빛이 잘 드는 곳으로 옮긴다. 지난주에는 강낭콩에서 첫 꽃이 피었다. 우리는 모두 박수를 치며 기뻐했다.',
+    '도서관은 내가 가장 좋아하는 곳이다. 조용한 의자에 앉아 책장을 넘기면 시간이 금방 간다. 오늘은 우주에 관한 책을 읽었다. 언젠가 나도 별을 가까이에서 보고 싶다.',
+    '꿀벌은 꽃과 꽃 사이를 날아다니며 꽃가루를 옮긴다. 덕분에 사과와 딸기 같은 열매가 열린다. 꿀벌이 사라지면 우리가 먹는 음식도 줄어든다. 그래서 꿀벌을 지키는 일은 아주 중요하다.',
+    '점심시간에 친구들과 운동장에서 피구를 했다. 처음에는 공이 무서웠지만 친구들이 응원해 주었다. 마지막에 공을 잡아 우리 편이 이겼다. 땀이 났지만 마음은 무척 상쾌했다.',
+    '물은 온도에 따라 모습이 바뀐다. 차갑게 얼리면 단단한 얼음이 되고, 뜨겁게 끓이면 수증기가 되어 날아간다. 하늘의 구름도 수증기가 모여서 만들어진다. 비와 눈은 다시 땅으로 돌아오는 물이다.',
+    '할머니 댁에 가면 마당에 커다란 감나무가 있다. 가을이 되면 주황색 감이 주렁주렁 열린다. 할머니는 높은 가지의 감은 까치밥으로 남겨 두신다. 새들도 겨울을 나야 한다고 말씀하셨다.',
+    '분리수거를 할 때는 먼저 깨끗이 씻어야 한다. 플라스틱 병은 라벨을 떼고 납작하게 눌러서 버린다. 종이는 테이프를 떼어 내고 묶어 둔다. 작은 습관이 모이면 지구를 지킬 수 있다.',
+    '밤하늘을 올려다보면 수많은 별이 반짝인다. 별빛은 아주 먼 곳에서 오랜 시간을 달려 우리 눈에 닿는다. 어떤 별빛은 내가 태어나기 전에 출발했을지도 모른다. 그래서 밤하늘은 과거를 보여 주는 창문 같다.',
+    '친구와 다툰 날에는 마음이 무겁다. 하지만 먼저 미안하다고 말하면 생각보다 금방 풀린다. 오늘 나는 쉬는 시간에 용기를 내어 사과했다. 친구도 웃으며 괜찮다고 말해 주었다.',
+    '우리 동네 시장에는 맛있는 냄새가 가득하다. 떡집 아주머니는 늘 밝게 인사해 주시고, 생선 가게 아저씨는 큰 소리로 손님을 부르신다. 엄마와 함께 장을 보면 구경할 것이 많다. 시장은 사람들의 이야기가 모이는 곳이다.',
+    '자전거를 처음 배울 때 여러 번 넘어졌다. 무릎이 까져서 그만두고 싶었지만 아빠가 뒤에서 잡아 주셨다. 어느 순간 아빠 손이 없어도 앞으로 나아가고 있었다. 포기하지 않으면 결국 해낼 수 있다는 걸 알았다.',
+    '나무는 우리에게 많은 것을 준다. 뜨거운 여름에는 그늘을 만들어 주고, 숨 쉬는 데 필요한 산소도 내놓는다. 새와 곤충에게는 집이 되어 준다. 그래서 우리는 나무를 아끼고 함부로 꺾지 않는다.',
+    '오늘 과학 시간에 자석 실험을 했다. 같은 극끼리는 서로 밀어내고 다른 극끼리는 끌어당겼다. 클립과 못은 붙었지만 동전과 지우개는 붙지 않았다. 집에 가서 냉장고 자석으로 다시 확인해 보고 싶다.',
+    '겨울이 다가오면 철새들이 따뜻한 곳을 찾아 먼 길을 떠난다. 새들은 해와 별, 땅의 모양을 보고 길을 찾는다고 한다. 무리를 지어 날면 바람을 덜 맞아 힘이 덜 든다. 함께하면 더 멀리 갈 수 있다는 것을 새들이 알려 준다.',
+    '발표를 앞두고 가슴이 두근거렸다. 거울 앞에서 여러 번 연습하고 중요한 낱말을 카드에 적었다. 막상 앞에 서니 친구들의 눈빛이 따뜻했다. 발표를 마치고 박수를 받으니 자신감이 생겼다.',
+    '바다에는 신기한 생물이 많이 산다. 문어는 몸 색깔을 바꿔서 숨고, 해파리는 투명한 몸으로 물속을 떠다닌다. 깊은 바다에는 스스로 빛을 내는 물고기도 있다. 바다는 아직 우리가 다 알지 못하는 세계다.',
+    '주말에 가족과 함께 김밥을 만들었다. 김 위에 밥을 얇게 펴고 단무지, 시금치, 달걀을 올렸다. 처음에는 자꾸 터졌지만 점점 동그랗게 말 수 있었다. 내가 만든 김밥은 세상에서 제일 맛있었다.',
+    '타자를 잘 치려면 손가락의 자리를 기억해야 한다. 왼손 검지는 ㄹ에, 오른손 검지는 ㅓ에 올려 둔다. 처음에는 느리더라도 화면을 보며 정확하게 치는 연습을 한다. 꾸준히 연습하면 어느새 손가락이 저절로 움직인다.',
+    '비 오는 날 교실에서 창밖을 바라보았다. 빗방울이 유리창을 타고 줄지어 흘러내렸다. 운동장에는 아무도 없었지만 나무들은 시원하게 비를 맞고 있었다. 빗소리를 들으며 책을 읽으니 마음이 차분해졌다.'
+  ];
+
+  let TYPE = null;           // 서버에서 받은 타자 정보
+  let TP = null;             // 지금 치고 있는 판
+
+  /* 한 글자를 칠 때 누르는 횟수 (자모 기준: 한 = ㅎ·ㅏ·ㄴ 3타, 겹모음·겹받침은 2타) */
+  const JUNG2 = [9, 10, 11, 14, 15, 16, 19];          // ㅘ ㅙ ㅚ ㅝ ㅞ ㅟ ㅢ
+  const JONG2 = [3, 5, 6, 9, 10, 11, 12, 13, 14, 15, 18]; // ㄳ ㄵ ㄶ ㄺ ㄻ ㄼ ㄽ ㄾ ㄿ ㅀ ㅄ
+  function strokes(ch) {
+    const c = ch.charCodeAt(0);
+    if (c < 0xAC00 || c > 0xD7A3) return 1;
+    const i = c - 0xAC00, jung = Math.floor((i % 588) / 28), jong = i % 28;
+    return 1 + (JUNG2.includes(jung) ? 2 : 1) + (jong ? (JONG2.includes(jong) ? 2 : 1) : 0);
+  }
+  const pickRandom = (arr, not) => { let x; do { x = arr[Math.floor(Math.random() * arr.length)]; } while (arr.length > 1 && x === not); return x; };
+  const isPhone = () => window.matchMedia('(pointer: coarse)').matches && window.innerWidth < 760;
+
+  function loadTyping(withLoading) {
+    if (withLoading) showLoading(true);
+    google.script.run
+      .withSuccessHandler(res => {
+        showLoading(false);
+        if (!res.ok) { if (res.reason === 'auth') authExpired(); return; }
+        TYPE = res;
+        renderTypeList();
+      })
+      .withFailureHandler(onError)
+      .getTyping(TOKEN);
+  }
+
+  function rankingHtml(list, limit) {
+    if (!list.length) return '<div class="locked"><i>🏆</i>아직 도전 기록이 없어요. 첫 기록의 주인공이 되어 봐요!</div>';
+    const myNum = DATA && DATA.student ? DATA.student.num : -1;
+    const medal = r => r === 1 ? '🥇' : r === 2 ? '🥈' : r === 3 ? '🥉' : r;
+    let rows = list.slice(0, limit || list.length);
+    if (!TEACHER && limit && !rows.some(x => x.num === myNum)) {
+      const me = list.find(x => x.num === myNum);
+      if (me) rows = rows.concat([me]);
+    }
+    return rows.map(x => `
+      <div class="rank-row ${!TEACHER && x.num === myNum ? 'me' : ''}">
+        <span class="rk">${medal(x.rank)}</span>
+        <span class="nm"><small>${x.num}</small>${esc(x.name)}${!TEACHER && x.num === myNum ? ' (나)' : ''}</span>
+        <span class="cp">${x.cpm}<small>타</small></span>
+      </div>`).join('');
+  }
+
+  function renderTypeList() {
+    const T = TYPE, R = T.rules;
+    if (TEACHER) { renderTypeTeacher(); return; }
+    const st = T.stats, td = T.today, w = canWrite();
+    let html = readOnlyBanner();
+    if (isPhone()) html += `<div class="notice">💻 타자 연습은 노트북이나 크롬북 키보드로 하면 더 좋아요.</div>`;
+    html += `
+      <div class="stats">
+        <div class="stat"><span>🏆 도전 최고</span><b>${st.best}<small>타</small></b></div>
+        <div class="stat"><span>✏️ 짧은 글</span><b>${st.avgShort}<small>타</small></b></div>
+        <div class="stat"><span>🎯 정확도</span><b>${st.avgAcc}<small>%</small></b></div>
+      </div>
+      <div class="rule-card">
+        🪙 정확도 <b>${R.minAcc}% 이상</b>으로 아래 중 하나를 해내면 <b>${R.reward}야호</b> (하루 1번) ${td.rewarded ? '<b>· 오늘은 받았어요 ✓</b>' : ''}
+        <div class="tp-today">
+          <div class="${td.shortDone >= R.shortNeed ? 'ok' : ''}">✏️ 짧은 글<b>${Math.min(td.shortDone, R.shortNeed)}/${R.shortNeed}</b></div>
+          <div class="${td.longDone ? 'ok' : ''}">📄 긴 글<b>${td.longDone ? '✓' : '0/1'}</b></div>
+          <div class="${td.challengeDone ? 'ok' : ''}">🏆 도전<b>${td.challengeDone ? '✓' : '0/1'}</b></div>
+        </div>
+      </div>
+      <div class="tp-modes">
+        <button class="tp-mode" ${w ? '' : 'disabled'} onclick="startTyping('짧은글')"><i>✏️</i><b>짧은 글</b><span>한 줄씩 정확하게</span></button>
+        <button class="tp-mode" ${w ? '' : 'disabled'} onclick="startTyping('긴글')"><i>📄</i><b>긴 글</b><span>한 편 끝까지</span></button>
+        <button class="tp-mode ch" ${w ? '' : 'disabled'} onclick="startTyping('도전')"><i>🏆</i><b>1분 도전</b><span>최고 기록 깨기</span></button>
+      </div>
+      <div class="sec-title"><h2>🏆 우리 반 1분 도전 순위</h2><span>학생마다 최고 기록</span></div>
+      <div class="panel">${rankingHtml(T.ranking, 10)}</div>
+      <div class="sec-title"><h2>📋 내 기록</h2><span>${st.total ? `모두 ${st.total}판` : ''}</span></div>
+      <div class="panel">${T.recent.length ? `<div class="list">${T.recent.map(r => `
+        <div class="row"><div class="r-icon">${r.kind === '도전' ? (r.best ? '🏆' : '⚡') : r.kind === '긴글' ? '📄' : '✏️'}</div>
+          <div class="r-main"><div class="r-title">${esc(r.kind === '도전' ? '1분 도전' : r.kind === '긴글' ? '긴 글' : '짧은 글')} · ${r.cpm}타${r.best ? ' <span class="badge">최고</span>' : ''}</div>
+          <div class="r-sub">${esc(r.time)} · 정확도 ${r.acc}%${r.note ? ' · ' + esc(r.note) : ''}</div></div>
+          ${r.yaho ? `<div class="r-right up">+${r.yaho}</div>` : ''}</div>`).join('')}</div>` : '<div class="locked"><i>⌨️</i>아직 기록이 없어요. 짧은 글부터 시작해 봐요!</div>'}</div>`;
+    $('typeList').innerHTML = html;
+  }
+
+  function renderTypeTeacher() {
+    const T = TYPE;
+    const rows = T.table.slice().sort((a, b) => b.best - a.best || a.num - b.num);
+    $('typeList').innerHTML = `
+      <div class="sec-title" style="margin-top:0"><h2>👩‍🏫 학생별 타자 기록</h2><span>도전 최고순</span></div>
+      <div class="panel" style="overflow-x:auto">
+        <table class="nt-grid" style="min-width:440px;table-layout:auto"><thead><tr>
+          <th style="text-align:left;padding-left:10px">학생</th><th>도전 최고</th><th>처음 → 지금</th><th>정확도</th><th>이번 주</th><th>전체</th></tr></thead>
+        <tbody>${rows.map(r => `<tr>
+          <td><span class="who" style="display:inline-block"><small>${r.num}</small>${esc(r.name)}${r.flags ? ' ⚠️' : ''}</span></td>
+          <td><b>${r.best || '-'}</b></td>
+          <td style="font-size:13px;font-weight:700">${r.best ? `${r.first} → ${r.best} <span style="color:var(--up)">${r.best - r.first > 0 ? '+' + (r.best - r.first) : ''}</span>` : '-'}</td>
+          <td>${r.total ? r.avgAcc + '%' : '-'}</td><td>${r.week}판</td><td>${r.total}판</td></tr>`).join('')}</tbody></table>
+        <p class="updated" style="margin-top:8px">⚠️는 너무 빠른 기록(보상·순위에서 빠짐)이 있는 학생이에요</p>
+      </div>
+      <div class="sec-title"><h2>🏆 1분 도전 순위</h2></div>
+      <div class="panel">${rankingHtml(T.ranking)}</div>`;
+  }
+
+  /* ---------- 치는 화면 ---------- */
+  function startTyping(kind) {
+    if (!canWrite()) { toast('지금은 쉬는 시간이에요'); return; }
+    stopTyping();
+    const text = kind === '짧은글' ? pickRandom(TYPE_SHORT) : pickRandom(TYPE_LONG);
+    TP = { kind: kind, target: Array.from(text), text: text, start: 0, timer: null, composing: false, done: false, last: null, saving: false };
+    $('tpTitle').textContent = kind === '짧은글' ? '✏️ 짧은 글 연습' : kind === '긴글' ? '📄 긴 글 연습' : '🏆 1분 도전';
+    renderTypePlay();
+    showScreen('typePlayScreen');
+    setTimeout(() => $('tpInput') && $('tpInput').focus(), 80);
+  }
+
+  function renderTypePlay() {
+    const R = TYPE.rules, td = TYPE.today;
+    const third = TP.kind === '도전' ? `<div><span>남은 시간</span><b id="tpThird">${R.challengeSec}</b></div>`
+      : TP.kind === '짧은글' ? `<div><span>오늘 짧은 글</span><b id="tpThird">${Math.min(td.shortDone, R.shortNeed)}/${R.shortNeed}</b></div>`
+      : `<div><span>진행</span><b id="tpThird">0%</b></div>`;
+    $('tpBody').innerHTML = `
+      <div class="tp-bar"><div><span>타수</span><b id="tpCpm">0</b></div><div><span>정확도</span><b id="tpAcc">100</b></div>${third}</div>
+      <div class="tp-last" id="tpLast">${TP.lastMsg || (TP.kind === '도전' ? '첫 글자를 치면 1분이 시작돼요!' : '위의 글을 아래 칸에 똑같이 따라 쳐요')}</div>
+      <div class="tp-target ${TP.kind === '짧은글' ? 'short' : ''}" id="tpTarget"></div>
+      <textarea class="tp-input" id="tpInput" rows="${TP.kind === '짧은글' ? 1 : 3}" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="여기에 쳐요"></textarea>
+      <div class="tp-tip">${TP.kind === '도전' ? '끝까지 치면 다음 글이 이어서 나와요 · 붙여넣기는 안 돼요' : '틀린 글자는 ⌫로 고칠 수 있어요 · 마지막 글자까지 치면 끝나요'}</div>
+      <div id="tpResult"></div>`;
+    const inp = $('tpInput');
+    inp.addEventListener('compositionstart', () => { TP.composing = true; });
+    inp.addEventListener('compositionend', () => { TP.composing = false; onTypeInput(); });
+    inp.addEventListener('input', onTypeInput);
+    inp.addEventListener('paste', e => { e.preventDefault(); toast('붙여넣기는 안 돼요. 직접 쳐요!'); });
+    inp.addEventListener('drop', e => e.preventDefault());
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); if (!e.isComposing && TP.kind !== '도전') tryFinish(true); }
+    });
+    drawTarget(0, []);
+  }
+
+  /* 친 글자 판정 → 타수·정확도 */
+  function typeStats() {
+    const v = Array.from($('tpInput').value);
+    const judged = TP.composing ? Math.max(0, v.length - 1) : v.length;
+    let ok = 0, st = 0;
+    for (let i = 0; i < judged; i++) if (v[i] === TP.target[i]) { ok++; st += strokes(v[i]); }
+    const secs = TP.start ? (Date.now() - TP.start) / 1000 : 0;
+    return {
+      v: v, judged: judged, ok: ok,
+      acc: judged ? Math.round(ok / judged * 1000) / 10 : 100,
+      cpm: secs >= 1 ? Math.round(st / secs * 60) : 0,
+      secs: secs
+    };
+  }
+
+  function drawTarget(judged, v) {
+    const t = TP.target;
+    const cur = v.length && TP.composing ? v.length - 1 : judged;
+    let from = 0;
+    if (TP.kind === '도전' && cur > 90) from = cur - 60;     // 도전은 지금 치는 곳 근처만 보여요
+    let html = '';
+    for (let i = from; i < t.length; i++) {
+      const c = t[i] === ' ' ? '&nbsp;' : esc(t[i]);
+      const cls = i < judged ? (v[i] === t[i] ? 'ok' : 'bad') : i === cur ? 'cur' : 'rest';
+      html += `<span class="${cls}">${c}</span>${t[i] === ' ' ? '<wbr>' : ''}`;
+    }
+    $('tpTarget').innerHTML = html;
+    const curEl = $('tpTarget').querySelector('.cur');
+    if (curEl && TP.kind !== '짧은글') {
+      const box = $('tpTarget');
+      if (curEl.offsetTop - box.scrollTop > box.clientHeight - 60) box.scrollTop = curEl.offsetTop - 40;
+    }
+  }
+
+  function onTypeInput() {
+    if (!TP || TP.done) return;
+    const inp = $('tpInput');
+    if (!TP.start && inp.value.length) {
+      TP.start = Date.now();
+      if (TP.kind === '도전') { TP.timer = setInterval(tickChallenge, 200); $('tpLast').textContent = '⏱ 1분 도전 중! 정확하게 쳐요'; }
+    }
+    const s = typeStats();
+    // 도전: 끝에 가까워지면 다음 글을 이어 붙여요
+    if (TP.kind === '도전' && s.v.length > TP.target.length - 30) {
+      TP.target = TP.target.concat(Array.from(' ' + pickRandom(TYPE_LONG)));
+    }
+    drawTarget(s.judged, s.v);
+    $('tpCpm').textContent = s.cpm;
+    $('tpAcc').textContent = s.acc;
+    $('tpAcc').classList.toggle('warn', s.judged > 3 && s.acc < TYPE.rules.minAcc);
+    if (TP.kind === '긴글') $('tpThird').textContent = Math.min(100, Math.round(s.judged / TP.target.length * 100)) + '%';
+    if (TP.kind !== '도전') tryFinish(false);
+  }
+
+  function tryFinish(byEnter) {
+    if (!TP || TP.done) return;
+    const s = typeStats();
+    if (s.judged >= TP.target.length || (byEnter && s.v.length >= TP.target.length)) finishTyping();
+    else if (byEnter) toast('끝까지 쳐야 해요');
+  }
+
+  function tickChallenge() {
+    if (!TP || TP.done) return;
+    const left = Math.max(0, TYPE.rules.challengeSec - (Date.now() - TP.start) / 1000);
+    $('tpThird').textContent = Math.ceil(left);
+    $('tpThird').classList.toggle('warn', left <= 10);
+    const s = typeStats();
+    $('tpCpm').textContent = s.cpm;
+    if (left <= 0) finishTyping();
+  }
+
+  function stopTyping() {
+    if (TP && TP.timer) clearInterval(TP.timer);
+    if (TP) TP.done = true;
+  }
+
+  function finishTyping() {
+    if (!TP || TP.done) return;
+    const s = typeStats();
+    stopTyping();
+    $('tpInput').disabled = true;
+    const secs = TP.kind === '도전' ? TYPE.rules.challengeSec : Math.max(1, Math.round(s.secs * 10) / 10);
+    const st = s.v.slice(0, s.judged).reduce((a, ch, i) => a + (ch === TP.target[i] ? strokes(ch) : 0), 0);
+    const cpm = Math.round(st / secs * 60);
+    const result = { kind: TP.kind, cpm: cpm, acc: s.acc, secs: secs, chars: s.judged };
+    TP.saving = true;
+    google.script.run
+      .withSuccessHandler(res => {
+        TP.saving = false;
+        if (!res.ok) {
+          if (res.reason === 'auth') { authExpired(); return; }
+          toast(res.message || '저장하지 못했어요');
+          if (res.closed) closeTypePlay(true);
+          return;
+        }
+        TYPE = Object.assign(TYPE, res);
+        if (res.saved.yaho) fetchDashboard(false);
+        showTypeResult(res.saved);
+      })
+      .withFailureHandler(err => { TP.saving = false; onError(err); })
+      .saveTyping(TOKEN, result.kind, result.cpm, result.acc, result.secs, result.chars);
+  }
+
+  function showTypeResult(r) {
+    const R = TYPE.rules, td = TYPE.today;
+    let msg = '', cls = '';
+    if (r.yaho) { msg = `🪙 오늘의 타자 야호 +${r.yaho}!`; cls = 'got'; }
+    else if (r.note) msg = r.note.indexOf('짧은 글') === 0 ? `✏️ ${r.note} · ${R.shortNeed - td.shortDone}문장 더 치면 야호!` : r.note;
+    if (r.kind === '짧은글') {
+      // 짧은 글: 결과를 한 줄로 보여 주고 바로 다음 문장
+      const prevText = TP ? TP.text : '';
+      TP = { kind: '짧은글', target: null, done: false, timer: null, composing: false, start: 0,
+             lastMsg: `방금 ${r.cpm}타 · 정확도 ${r.acc}% ${r.valid ? '✓' : ''}${msg ? ' · ' + msg : ''}` };
+      const text = pickRandom(TYPE_SHORT, prevText);
+      TP.text = text; TP.target = Array.from(text);
+      renderTypePlay();
+      $('tpLast').classList.toggle('ok', !!r.valid);
+      if (r.yaho) toast(`🪙 짧은 글 ${R.shortNeed}문장 완료! +${r.yaho}야호`);
+      setTimeout(() => $('tpInput') && $('tpInput').focus(), 50);
+      return;
+    }
+    if (r.best) { msg = `🎉 최고 기록! ${r.prevBest ? `(이전 ${r.prevBest}타)` : '첫 도전 기록이에요'}` + (r.yaho ? ` · +${r.yaho}야호` : ''); cls = 'best'; }
+    $('tpResult').innerHTML = `
+      <div class="tp-result">
+        <div class="sub">${r.kind === '도전' ? '🏆 1분 도전 결과' : '📄 긴 글 결과'}</div>
+        <div class="big">${r.cpm}<small>타</small></div>
+        <div class="sub">정확도 ${r.acc}% · ${r.kind === '도전' ? '1분' : Math.round(r.secs) + '초'}</div>
+        ${msg ? `<div class="msg ${cls}">${esc(msg)}</div>` : ''}
+        <div class="btn-row"><button class="btn ghost" style="flex:1" onclick="closeTypePlay(true)">목록으로</button>
+          <button class="btn primary" onclick="startTyping('${r.kind}')">${r.kind === '도전' ? '다시 도전' : '다른 글 치기'}</button></div>
+      </div>`;
+    $('tpResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function closeTypePlay(force) {
+    if (!force && TP && TP.start && !TP.done && !confirm('치던 중이에요. 그만할까요? (기록은 남지 않아요)')) return;
+    stopTyping();
+    TP = null;
+    showScreen('typeScreen');
+    if (TYPE) renderTypeList();
+    loadTyping(false);
   }
 
   /* ---------- 공통 ---------- */
