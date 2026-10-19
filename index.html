@@ -1071,6 +1071,7 @@
   async function callApi(fn, args) {
     if (API_URL.indexOf('여기에') >= 0) throw new Error('index.html 맨 위 API_URL에 웹 앱 주소를 넣어 주세요.');
     let res;
+    const t0 = performance.now();
     try {
       res = await fetch(API_URL, {
         method: 'POST',
@@ -1085,6 +1086,9 @@
     let json;
     try { json = await res.json(); }
     catch (e) { throw new Error('서버 답을 읽지 못했어요. 웹 앱 액세스가 \'모든 사용자\'인지 확인해 주세요.'); }
+    // 응답 시간 기록 (선생님 🏅 화면 아래에서 볼 수 있어요)
+    TIMINGS.unshift({ fn: fn, total: Math.round(performance.now() - t0), server: json && json.ms ? json.ms : 0, at: new Date() });
+    if (TIMINGS.length > 30) TIMINGS.length = 30;
     if (json && json.__error) throw new Error(json.__error);
     const data = json ? json.data : null;
     // 이용 시간 상태를 따라가요 (쉬는 시간이 되면 쓰기 칸을 숨겨요)
@@ -1094,6 +1098,7 @@
   }
 
   let SCHOOL = null;     // { open, label, bypass } 서버가 알려 주는 이용 시간 상태
+  const TIMINGS = [];    // 최근 응답 시간 { fn, total, server }
   let MASTER = false;    // 선생님 비밀번호로 들어온 학생 화면인지
 
   /* ---------- 설정 ---------- */
@@ -1166,7 +1171,9 @@
       if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && window.innerWidth > 700) { e.preventDefault(); sendQuestion(); }
     });
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && TOKEN && !TEACHER && Date.now() - lastFetch > 60 * 1000) fetchDashboard(false);
+      // 다른 앱에 갔다 오면: 홈을 보고 있고 5분이 지났을 때만 새로 받아요 (20명이 함께 쓸 때 서버 부담 줄이기)
+      const onHome = $('homeScreen').classList.contains('active');
+      if (!document.hidden && TOKEN && !TEACHER && onHome && (dashStale || Date.now() - lastFetch > 5 * 60 * 1000)) fetchDashboard(false);
     });
 
     /* 빠르게 열기: 지난번에 받은 화면을 먼저 보여 주고, 서버에서 새로 받아 바꿔요 (왕복 1번) */
@@ -1465,6 +1472,7 @@
 
   function applyDashboard(res, fromCache) {
     DATA = res;
+    if (!fromCache) dashStale = false;
     MASTER = !!res.master;
     if (res.school && !fromCache) SCHOOL = res.school;
     if (!fromCache) lastFetch = Date.now();
@@ -1475,6 +1483,10 @@
   }
 
   function refresh() { fetchDashboard(true); }
+
+  /* 야호를 받으면 바로 홈을 다시 받지 않고, 홈 탭을 열 때 받아요 (요청 수 줄이기) */
+  let dashStale = false;
+  function markDashStale() { dashStale = true; }
 
   /* 날짜별 상태: { 'yyyy-MM-dd': { state: on|late|part, n } } */
   function dayMap(key) {
@@ -1583,7 +1595,8 @@
     renderHwBanner();
     renderCompare();
     renderMyHof();
-    $('updated').textContent = `${DATA.updated} 기준 · 🔄를 누르면 새로 불러와요`;
+    const lastT = TIMINGS.find(t => t.fn === 'getDashboard' || t.fn === 'boot' || t.fn === 'login');
+    $('updated').textContent = `${DATA.updated} 기준${lastT ? ` · ${(lastT.total / 1000).toFixed(1)}초` : ''} · 🔄를 누르면 새로 불러와요`;
   }
 
 
@@ -1914,7 +1927,7 @@
   const MAX_IMAGES = 3;
 
   function goTab(tab) {
-    if (tab === 'home') { showScreen('homeScreen'); return; }
+    if (tab === 'home') { showScreen('homeScreen'); if (dashStale) fetchDashboard(false); return; }
     if (tab === 'inq') { showScreen('inqScreen'); loadInquiries(!INQ); return; }
     if (tab === 'book') { showScreen('bookScreen'); loadBooks(!BOOKS); return; }
     if (tab === 'note') { showScreen('noteScreen'); loadNotes(!NOTES); return; }
@@ -2261,7 +2274,7 @@
         window.scrollTo(0, 0);
         toast(res.edited ? '✏️ 고친 과제를 냈어요!' : (res.a.reward ? `📤 과제를 냈어요! 선생님이 확인하면 🪙${res.a.reward}야호를 받아요` : '📤 과제를 냈어요!'));
         HW = null;                       // 목록 새로 받기
-        if (DATA && DATA.hw) fetchDashboard(false);
+        markDashStale();
       })
       .withFailureHandler(err => {
         btn.disabled = false;
@@ -2807,7 +2820,7 @@
         renderSumOnly();
         const s = res.saved;
         toast(s.yaho ? `🪙 ${s.nth}차 정리 완료! ${s.yaho}야호를 받았어요` : `📒 ${s.nth}차 정리를 저장했어요 (${s.reason})`);
-        if (s.yaho && DATA) fetchDashboard(false);
+        if (s.yaho) markDashStale();
       })
       .withFailureHandler(onError)
       .saveSummary(TOKEN, INQD.inq.id, text);
@@ -3334,7 +3347,7 @@
     if (s.bonus) { toast(`🎉 책을 다 읽었어요! 완독 보상 +${res.rules.bookReward}야호`); }
     else if (s.kind === 'log') toast(s.yaho ? `📖 기록했어요! +${s.yaho}야호` : `📖 기록했어요${s.reason === '오늘 이미 받음' ? ' (오늘 야호는 이미 받았어요)' : ''}`);
     else if (s.kind === 'review') toast(`✍️ 감상문 ${s.nth}차를 저장했어요`);
-    if (s.yaho || s.bonus) { BOOKS = null; fetchDashboard(false); }
+    if (s.yaho || s.bonus) { BOOKS = null; markDashStale(); }
   }
 
   function saveReadingLog() {
@@ -3773,34 +3786,42 @@
   }
 
   function saveNoteNow() {
-    if (noteBusy) return;
+    if (noteBusy) { toast('앞 기록을 저장하는 중이에요. 잠깐만요!'); return; }
     const E = NOTE_ED;
     const L = $('ntLearned').value, W = $('ntWonder').value, F = $('ntFelt').value;
     if (!E.subject) { toast('과목을 골라 주세요'); return; }
     if (!L.trim() && !W.trim() && !F.trim()) { toast('알게 된 것, 궁금한 것, 느낀 것 중 하나는 써 주세요'); return; }
+    // 먼저 화면에 저장된 것처럼 보여 주고, 서버 저장은 뒤에서 해요 (실패하면 되돌리고 쓰던 내용을 다시 열어요)
+    const backup = NOTES;
+    const draft = { date: E.date, period: E.period, subject: E.subject, learned: L.trim(), wonder: W.trim(), felt: F.trim() };
+    const old = findNote(E.date, E.period);
+    const temp = Object.assign({ id: old ? old.id : 'tmp', num: 0, name: '', yaho: old ? old.yaho : 0, feedback: old ? old.feedback : '', updated: '저장 중…' }, draft);
+    NOTES = Object.assign({}, NOTES, { notes: NOTES.notes.filter(n => !(n.date === E.date && n.period === E.period)).concat([temp])
+      .sort((a, b) => b.date.localeCompare(a.date) || a.period - b.period) });
     noteBusy = true;
-    $('ntSave').disabled = true;
-    showLoading(true);
+    NOTE_ED = null;
+    showScreen('noteScreen');
+    renderNoteList();
+    toast('📒 저장하는 중…');
+    const restore = msg => {
+      NOTES = backup;
+      toast(msg || '저장하지 못했어요. 다시 눌러 주세요.');
+      NOTE_ED = { date: draft.date, period: draft.period, subject: draft.subject };
+      renderNoteEditor(Object.assign({}, old || {}, draft));
+      showScreen('noteEditScreen');
+    };
     google.script.run
       .withSuccessHandler(res => {
         noteBusy = false;
-        showLoading(false);
-        if (!res.ok) {
-          if ($('ntSave')) $('ntSave').disabled = false;
-          res.reason === 'auth' ? authExpired() : toast(res.message);
-          return;
-        }
+        if (!res.ok) { res.reason === 'auth' ? authExpired() : restore(res.message); return; }
         NOTES = res;
         const s = res.saved;
         toast(s.yaho ? `📒 ${s.period}교시 기록 완료! +${s.yaho}야호` : s.edited ? '📒 고친 내용을 저장했어요' : '📒 기록했어요');
-        if (s.yaho) fetchDashboard(false);
-        // 오늘 기록이면 다음 빈 교시로 넘어갈 수 있게 목록으로 돌아가요
-        NOTE_ED = null;
-        showScreen('noteScreen');
-        renderNoteList();
+        if (s.yaho) markDashStale();
+        if ($('noteScreen').classList.contains('active')) renderNoteList();
       })
-      .withFailureHandler(err => { noteBusy = false; if ($('ntSave')) $('ntSave').disabled = false; onError(err); })
-      .saveNote(TOKEN, E.date, E.period, E.subject, L, W, F);
+      .withFailureHandler(() => { noteBusy = false; restore(); })
+      .saveNote(TOKEN, draft.date, draft.period, draft.subject, L, W, F);
   }
 
   /* 궁금한 것 → 질문 탐구 새 대화로 */
@@ -3975,7 +3996,25 @@
           <div class="tx"><div class="tt">${h.num}번 ${esc(h.name)} · ${esc(h.badge)}<span>${fmtShort(h.date)}</span></div><p>${esc(h.text)}</p></div>
           ${h.yaho ? `<span class="yh">🪙 ${h.yaho}</span>` : ''}
           <button class="del" title="지우기" onclick="deleteHofItem('${esc(h.id)}')">🗑</button>
-        </div>`).join('') : '<div class="locked"><i>🏅</i>아직 명예의 전당 기록이 없어요</div>'}</div>`;
+        </div>`).join('') : '<div class="locked"><i>🏅</i>아직 명예의 전당 기록이 없어요</div>'}</div>
+      ${timingHtml()}`;
+  }
+
+  /* ⏱ 응답 시간: 전체 = 서버 처리 + 오가는 시간 (이 기기 기준 최근 30번) */
+  const FN_NAMES = { boot: '앱 열기', login: '로그인', getDashboard: '홈', getHomework: '과제 목록', getAssignment: '과제 열기', submitWork: '과제 내기',
+    getInquiries: '질문 목록', getInquiry: '탐구 열기', askQuestion: '질문하기', saveSummary: '정리 저장', getBooks: '독서 목록', getBook: '책 열기',
+    addReadingLog: '독서 기록', saveBookReview: '감상문', getNotes: '배움 노트', saveNote: '배움 저장', getTyping: '타자', saveTyping: '타자 저장',
+    getHof: '명예의 전당', addHof: '명예 입력', teacherLogin: '선생님 로그인', logout: '나가기', changePin: '비밀번호 바꾸기' };
+  function timingHtml() {
+    if (!TIMINGS.length) return '';
+    const sec = ms => (ms / 1000).toFixed(1);
+    return `<div class="sec-title"><h2>⏱ 응답 시간</h2><span>이 기기 · 최근 ${TIMINGS.length}번</span></div>
+      <div class="panel" style="overflow-x:auto"><table class="nt-grid" style="table-layout:auto;min-width:300px"><thead><tr>
+        <th style="text-align:left;padding-left:10px">기능</th><th>전체</th><th>서버 처리</th><th>오가는 시간</th></tr></thead><tbody>
+        ${TIMINGS.map(t => `<tr><td style="font-size:13px;font-weight:800">${esc(FN_NAMES[t.fn] || t.fn)}</td>
+          <td><b style="color:${t.total > 4000 ? 'var(--down)' : 'var(--ink)'}">${sec(t.total)}초</b></td><td>${sec(t.server)}초</td><td>${sec(Math.max(0, t.total - t.server))}초</td></tr>`).join('')}
+      </tbody></table>
+      <p class="updated" style="margin-top:8px">서버 처리가 길면 시트 읽기·저장이 느린 것이고, 오가는 시간이 길면 인터넷이나 구글 서버를 기다리는 시간이에요.</p></div>`;
   }
 
   function toggleHofStudent(num) {
@@ -4300,52 +4339,77 @@
     const st = s.v.slice(0, s.judged).reduce((a, ch, i) => a + (ch === TP.target[i] ? strokes(ch) : 0), 0);
     const cpm = Math.round(st / secs * 60);
     const result = { kind: TP.kind, cpm: cpm, acc: s.acc, secs: secs, chars: s.judged };
-    TP.saving = true;
+    // 결과는 바로 보여 주고, 저장은 뒤에서 (야호·최고 기록은 저장되면 채워요)
+    const seq = ++typeSeq;
+    showTypeResult(Object.assign({ valid: s.acc >= TYPE.rules.minAcc, pending: true, seq: seq }, result));
     google.script.run
       .withSuccessHandler(res => {
-        TP.saving = false;
         if (!res.ok) {
           if (res.reason === 'auth') { authExpired(); return; }
-          toast(res.message || '저장하지 못했어요');
+          toast(res.message || '기록을 저장하지 못했어요');
           if (res.closed) closeTypePlay(true);
           return;
         }
         TYPE = Object.assign(TYPE, res);
-        if (res.saved.yaho) fetchDashboard(false);
-        showTypeResult(res.saved);
+        if (res.saved.yaho) markDashStale();
+        updateTypeResult(Object.assign(res.saved, { seq: seq }));
       })
-      .withFailureHandler(err => { TP.saving = false; onError(err); })
+      .withFailureHandler(() => toast('⚠️ 기록을 저장하지 못했어요. 인터넷을 확인해 주세요.'))
       .saveTyping(TOKEN, result.kind, result.cpm, result.acc, result.secs, result.chars);
+  }
+  let typeSeq = 0;
+
+  /* 서버에 저장된 뒤: 야호·진행·최고 기록 표시를 채워요 */
+  function typeSavedMsg(r) {
+    const R = TYPE.rules, td = TYPE.today;
+    if (r.best && r.kind === '도전') return { cls: 'best', msg: `🎉 최고 기록! ${r.prevBest ? `(이전 ${r.prevBest}타)` : '첫 도전 기록이에요'}` + (r.yaho ? ` · +${r.yaho}야호` : '') };
+    if (r.yaho) return { cls: 'got', msg: `🪙 오늘의 타자 야호 +${r.yaho}!` };
+    if (!r.note) return { cls: '', msg: '' };
+    const left = r.kind === '짧은글' ? R.shortNeed - td.shortDone : r.kind === '긴글' ? R.longNeed - td.longDone : R.challengeNeed - td.challengeDone;
+    return { cls: '', msg: /\d+\/\d+$/.test(r.note) ? `${r.note} · ${left}번 더 하면 야호!` : r.note };
+  }
+
+  function updateTypeResult(r) {
+    const m = typeSavedMsg(r);
+    if (r.kind === '짧은글') {
+      const el = $('tpLast');
+      if (el && TP && TP.fromSeq === r.seq) {
+        el.textContent = `방금 ${r.cpm}타 · 정확도 ${r.acc}% ${r.valid ? '✓' : ''}${m.msg ? ' · ' + m.msg : ''}`;
+        el.classList.toggle('ok', !!r.valid);
+      }
+      const third = $('tpThird');
+      if (third && TP && TP.kind === '짧은글') third.textContent = `${Math.min(TYPE.today.shortDone, TYPE.rules.shortNeed)}/${TYPE.rules.shortNeed}`;
+      if (r.yaho) toast(`🪙 짧은 글 ${TYPE.rules.shortNeed}번 완료! +${r.yaho}야호`);
+      return;
+    }
+    const box = $('tpSavedMsg');
+    if (box && box.dataset.seq === String(r.seq)) {
+      box.className = 'msg ' + m.cls;
+      box.textContent = m.msg || '✓ 저장했어요';
+    }
+    if (r.yaho) toast(`🪙 +${r.yaho}야호!`);
   }
 
   function showTypeResult(r) {
-    const R = TYPE.rules, td = TYPE.today;
-    let msg = '', cls = '';
-    if (r.yaho) { msg = `🪙 오늘의 타자 야호 +${r.yaho}!`; cls = 'got'; }
-    else if (r.note) {
-      const left = r.kind === '짧은글' ? R.shortNeed - td.shortDone : r.kind === '긴글' ? R.longNeed - td.longDone : R.challengeNeed - td.challengeDone;
-      msg = /\d+\/\d+$/.test(r.note) ? `${r.note} · ${left}번 더 하면 야호!` : r.note;
-    }
     if (r.kind === '짧은글') {
-      // 짧은 글: 결과를 한 줄로 보여 주고 바로 다음 문장
+      // 짧은 글: 결과를 한 줄로 보여 주고 바로 다음 문장 (저장은 뒤에서)
       const prevText = TP ? TP.text : '';
-      TP = { kind: '짧은글', target: null, done: false, timer: null, composing: false, start: 0,
-             lastMsg: `방금 ${r.cpm}타 · 정확도 ${r.acc}% ${r.valid ? '✓' : ''}${msg ? ' · ' + msg : ''}` };
+      TP = { kind: '짧은글', target: null, done: false, timer: null, composing: false, start: 0, fromSeq: r.seq,
+             lastMsg: `방금 ${r.cpm}타 · 정확도 ${r.acc}% ${r.valid ? '✓' : `· ${TYPE.rules.minAcc}% 미만`} · 저장 중…` };
       const text = pickRandom(TYPE_SHORT, prevText);
       TP.text = text; TP.target = Array.from(text);
       renderTypePlay();
       $('tpLast').classList.toggle('ok', !!r.valid);
-      if (r.yaho) toast(`🪙 짧은 글 ${R.shortNeed}문장 완료! +${r.yaho}야호`);
       setTimeout(() => $('tpInput') && $('tpInput').focus(), 50);
       return;
     }
-    if (r.best) { msg = `🎉 최고 기록! ${r.prevBest ? `(이전 ${r.prevBest}타)` : '첫 도전 기록이에요'}` + (r.yaho ? ` · +${r.yaho}야호` : ''); cls = 'best'; }
+    const msg = r.valid ? '저장하는 중…' : `정확도 ${r.acc}% · ${TYPE.rules.minAcc}% 이상이어야 야호 조건에 들어가요`, cls = '';
     $('tpResult').innerHTML = `
       <div class="tp-result">
         <div class="sub">${r.kind === '도전' ? '🏆 1분 도전 결과' : '📄 긴 글 결과'}</div>
         <div class="big">${r.cpm}<small>타</small></div>
         <div class="sub">정확도 ${r.acc}% · ${r.kind === '도전' ? '1분' : Math.round(r.secs) + '초'}</div>
-        ${msg ? `<div class="msg ${cls}">${esc(msg)}</div>` : ''}
+        <div class="msg ${cls}" id="tpSavedMsg" data-seq="${r.seq}">${esc(msg)}</div>
         <div class="btn-row"><button class="btn ghost" style="flex:1" onclick="closeTypePlay(true)">목록으로</button>
           <button class="btn primary" onclick="startTyping('${r.kind}')">${r.kind === '도전' ? '다시 도전' : '다른 글 치기'}</button></div>
       </div>`;
