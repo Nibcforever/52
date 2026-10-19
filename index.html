@@ -645,6 +645,12 @@
     .back-chip { display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 14px; border-radius: 99px; background: var(--card); box-shadow: var(--shadow); font-size: 14px; font-weight: 800; color: var(--sub); margin-bottom: 14px; }
     @media (max-width: 400px) { .sj-pick { grid-template-columns: repeat(4, 1fr); } }
 
+    /* ---------- 선생님: 과제 만들기 ---------- */
+    .opt-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .opt-row button { height: 40px; padding: 0 14px; border-radius: 12px; background: var(--bg); font-size: 14px; font-weight: 800; color: var(--sub); }
+    .opt-row button.on { background: var(--ink); color: #fff; }
+    .hf-help { font-size: 12px; color: var(--faint); font-weight: 700; margin-top: 6px; line-height: 1.5; }
+
     /* ---------- 명예의 전당 뱃지 ---------- */
     .hof-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
     .hof-item { background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 14px 6px 12px; text-align: center; position: relative; }
@@ -954,6 +960,15 @@
       <button class="icon-btn text" onclick="doLogout()">나가기</button>
     </div>
     <div id="hofBody"></div>
+  </section>
+
+  <!-- 선생님: 과제 만들기 / 고치기 -->
+  <section class="screen" id="hwFormScreen">
+    <div class="top">
+      <button class="icon-btn" onclick="closeHwForm()">←</button>
+      <div class="d-title" id="hfTitle">새 과제 만들기</div>
+    </div>
+    <div id="hwFormBody"></div>
   </section>
 
   <!-- 과제 상세 -->
@@ -2092,7 +2107,7 @@
           <span>${a.isPublic
             ? `🌏 친구들이 볼 수 있어요 · ${a.showName ? '이름이 보여요' : '이름 대신 동물 이름으로 보여요'}${a.allowComment ? ' · 댓글 가능' : ''}`
             : '🔒 선생님만 볼 수 있어요'}</span>
-          ${a.reward ? `<span>🪙 선생님이 확인하면 ${a.reward}야호를 받아요</span>` : ''}
+          ${a.reward ? `<span>🪙 처음 내면 ${a.reward}야호를 바로 받아요</span>` : ''}
         </div>
       </div>`;
 
@@ -2274,7 +2289,8 @@
         hwEdit = false;
         renderHwDetail();
         window.scrollTo(0, 0);
-        toast(res.edited ? '✏️ 고친 과제를 냈어요!' : (res.a.reward ? `📤 과제를 냈어요! 선생님이 확인하면 🪙${res.a.reward}야호를 받아요` : '📤 과제를 냈어요!'));
+        toast(res.yaho ? `📤 과제를 냈어요! 🪙 +${res.yaho}야호` : res.edited ? '✏️ 고친 과제를 냈어요!' : '📤 과제를 냈어요!');
+        if (res.yaho) markDashStale();
         HW = null;                       // 목록 새로 받기
         markDashStale();
       })
@@ -2969,12 +2985,14 @@
 
   function renderTeacherList() {
     const list = HW.list;
+    const newBtn = `<button class="new-inq" onclick="openHwForm(null)">
+        <i>➕</i><span style="text-align:left"><b>새 과제 만들기</b><span>과목·설명·마감일·보상을 정하면 바로 학생에게 보여요</span></span></button>`;
     if (!list.length) {
-      $('hwList').innerHTML = `<div class="panel"><div class="locked"><i>📭</i>'과제' 시트에 과제를 적으면 여기에 나와요</div></div>`;
+      $('hwList').innerHTML = newBtn + `<div class="panel"><div class="locked"><i>📭</i>아직 과제가 없어요. 위 버튼으로 첫 과제를 만들어 보세요</div></div>`;
       return;
     }
     const groups = [['진행', '📝 진행 중'], ['마감', '🔒 마감'], ['숨김', '🙈 숨김 (학생에게 안 보여요)']];
-    let html = '';
+    let html = newBtn;
     groups.forEach(([st, label]) => {
       const items = list.filter(a => (a.status || '진행') === st);
       if (!items.length) return;
@@ -3013,9 +3031,10 @@
         <div class="hw-facts">
           <span>📅 ${a.due ? `${fmtDay(a.due)}까지 (${di.text})` : '마감일 없음'}</span>
           <span>${a.isPublic ? `🌏 공개 · ${a.showName ? '이름 보임' : '학생에게는 익명(동물 이름)'} · 댓글 ${a.allowComment ? '허용' : '끔'}` : '🔒 비공개 (선생님과 본인만)'}</span>
-          ${a.reward ? `<span>🪙 보상 ${a.reward}야호 (관리 앱에서 지급 예정)</span>` : ''}
+          <span>🪙 ${a.reward ? `처음 내면 ${a.reward}야호 (자동 지급)` : '보상 없음'}</span>
         </div>
       </div>
+      <button class="btn ghost" style="width:100%;flex:none;margin:-4px 0 16px" onclick="openHwForm('${esc(a.id)}')">✏️ 과제 고치기 (내용·마감일·보상·상태)</button>
       <div id="tSummary"></div>
       <div class="sec-title" style="margin-top:8px"><h2>학생 제출물</h2><span>번호순</span></div>`;
     html += HWD.gallery.length
@@ -4426,6 +4445,86 @@
     showScreen('typeScreen');
     if (TYPE) renderTypeList();
     loadTyping(false);
+  }
+
+  /* =================================================================
+     선생님: 과제 만들기 / 고치기
+     ================================================================= */
+  let HF = null;   // 쓰는 중인 과제
+
+  function openHwForm(id) {
+    const a = id ? (HW && HW.list.find(x => x.id === id)) || (HWD && HWD.a) : null;
+    HF = a ? Object.assign({}, a) : {
+      id: '', subject: '', unit: '', standard: '', title: '', desc: '', isPublic: true, showName: true, allowComment: true,
+      due: '', reward: (HW && HW.defaultReward) || 10, status: '진행'
+    };
+    $('hfTitle').textContent = a ? '과제 고치기' : '새 과제 만들기';
+    renderHwForm();
+    showScreen('hwFormScreen');
+  }
+
+  function closeHwForm() {
+    showScreen(HWD && HF && HF.id ? 'hwDetailScreen' : 'hwScreen');
+    HF = null;
+  }
+
+  function hfSet(k, v) { readHwForm(); HF[k] = v; renderHwForm(); }
+  function readHwForm() {
+    if (!$('hfName')) return;
+    HF.title = $('hfName').value; HF.unit = $('hfUnit').value; HF.standard = $('hfStd').value;
+    HF.desc = $('hfDesc').value; HF.due = $('hfDue').value; HF.reward = $('hfReward').value;
+  }
+
+  function renderHwForm() {
+    const subs = (HW && HW.subjects) || ['국어', '수학', '사회', '과학', '도덕', '영어', '음악', '미술', '체육', '실과', '창체'];
+    const opt = (k, items) => `<div class="opt-row">${items.map(([v, l]) => `<button class="${HF[k] === v ? 'on' : ''}" onclick='hfSet("${k}", ${JSON.stringify(v)})'>${l}</button>`).join('')}</div>`;
+    $('hwFormBody').innerHTML = `
+      <div class="panel">
+        <div class="ed-label">📌 과제 이름 <span>꼭 써요</span></div>
+        <input class="bk-input" id="hfName" maxlength="80" placeholder="예) 밤하늘 불꽃놀이 그리기" value="${esc(HF.title)}">
+        <div class="ed-label">📚 과목</div>
+        <div class="sj-pick">${subs.map(x => `<button class="${HF.subject === x ? 'on' : ''}" style="${sjStyle(x)}" onclick="hfSet('subject', '${x}')">${x}</button>`).join('')}</div>
+        <div class="ed-label">단원 <span>없어도 돼요</span></div>
+        <input class="bk-input" id="hfUnit" maxlength="60" placeholder="예) 오일파스텔" value="${esc(HF.unit)}">
+        <div class="ed-label">📝 설명</div>
+        <textarea class="nt-text" id="hfDesc" maxlength="2000" placeholder="학생에게 보여 줄 과제 설명을 써요">${esc(HF.desc)}</textarea>
+        <div class="ed-label">🎯 성취기준 <span>없어도 돼요</span></div>
+        <textarea class="nt-text" id="hfStd" maxlength="300" style="min-height:56px" placeholder="예) [6미02-04] 다양한 표현 방법을 탐색하여 활용할 수 있다.">${esc(HF.standard)}</textarea>
+      </div>
+      <div class="panel">
+        <div class="ed-label">📅 마감일 <span>비우면 마감 없음</span></div>
+        <input class="bk-input" id="hfDue" type="date" value="${esc(HF.due || '')}">
+        <div class="ed-label">🪙 보상 (야호) <span>처음 내면 바로 지급 · 0이면 없음</span></div>
+        <input class="bk-input" id="hfReward" type="number" inputmode="numeric" min="0" max="1000" value="${esc(HF.reward)}">
+        <div class="ed-label">🌏 공개</div>
+        ${opt('isPublic', [[true, '🌏 공개 (친구 작품 보기)'], [false, '🔒 비공개 (선생님만)']])}
+        ${HF.isPublic ? `<div class="ed-label">이름</div>${opt('showName', [[true, '이름 보임'], [false, '익명 (동물 이름)']])}
+          <div class="ed-label">댓글</div>${opt('allowComment', [[true, '댓글 허용'], [false, '댓글 끄기']])}` : ''}
+        <div class="ed-label">상태</div>
+        ${opt('status', [['진행', '📝 진행'], ['마감', '🔒 마감'], ['숨김', '🙈 숨김']])}
+        <p class="hf-help">마감: 학생이 더 낼 수 없어요 · 숨김: 학생 목록에서 안 보여요</p>
+        <div class="btn-row"><button class="btn primary" id="hfSave" onclick="saveHwForm()">${HF.id ? '💾 고친 내용 저장' : '➕ 과제 만들기'}</button></div>
+      </div>`;
+  }
+
+  function saveHwForm() {
+    readHwForm();
+    if (!HF.title.trim()) { toast('과제 이름을 써 주세요'); $('hfName').focus(); return; }
+    $('hfSave').disabled = true;
+    showLoading(true);
+    google.script.run
+      .withSuccessHandler(res => {
+        showLoading(false);
+        if (!res.ok) { if ($('hfSave')) $('hfSave').disabled = false; res.reason === 'auth' ? authExpired() : toast(res.message); return; }
+        HW = res;
+        const wasEdit = !!HF.id;
+        HF = null;
+        renderHwList();
+        toast(wasEdit ? '💾 과제를 고쳤어요' : `➕ '${res.saved.title}' 과제를 만들었어요`);
+        if (wasEdit && HWD) openHw(res.saved.id); else showScreen('hwScreen');
+      })
+      .withFailureHandler(err => { if ($('hfSave')) $('hfSave').disabled = false; onError(err); })
+      .saveAssignment(TOKEN, HF);
   }
 
   /* ---------- 공통 ---------- */
