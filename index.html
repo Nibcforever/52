@@ -6,6 +6,10 @@
   <meta name="theme-color" content="#3f9b4b">
   <title>나의 클래스크 · 오이쉬반</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥒</text></svg>">
+  <!-- 서버 연결을 미리 열어 두면 첫 요청이 빨라져요 -->
+  <link rel="preconnect" href="https://script.google.com">
+  <link rel="preconnect" href="https://script.googleusercontent.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
   <style>
     :root {
@@ -1165,22 +1169,44 @@
       if (!document.hidden && TOKEN && !TEACHER && Date.now() - lastFetch > 60 * 1000) fetchDashboard(false);
     });
 
-    showLoading(true);
+    /* 빠르게 열기: 지난번에 받은 화면을 먼저 보여 주고, 서버에서 새로 받아 바꿔요 (왕복 1번) */
+    TOKEN = store.get(STORE_KEY);
+    const isTeacher = TOKEN && store.get(ROLE_KEY) === 'T';
+    const cachedInfo = readJSON(INFO_KEY);
+    if (cachedInfo) applyInfo(cachedInfo);
+    const cachedDash = TOKEN && !isTeacher ? readJSON(DASH_KEY) : null;
+    if (cachedDash && cachedDash.ok && cachedInfo) {
+      applyDashboard(cachedDash, true);
+      $('updated').textContent = '🔄 새로 불러오는 중…';
+    } else if (!TOKEN && cachedInfo) {
+      showScreen('loginScreen');
+    } else {
+      showLoading(true);
+    }
     google.script.run
-      .withSuccessHandler(info => {
-        INFO = info;
-        $('loginTitle').textContent = info.appName;
-        $('loginSub').textContent = `${info.className} · 내 이름을 눌러요`;
-        document.title = `${info.appName} · ${info.className}`;
-        renderNames();
-        TOKEN = store.get(STORE_KEY);
-        if (TOKEN && store.get(ROLE_KEY) === 'T') enterTeacher();
-        else if (TOKEN) fetchDashboard(true);
-        else { showLoading(false); showScreen('loginScreen'); }
+      .withSuccessHandler(res => {
+        applyInfo(res.info);
+        writeJSON(INFO_KEY, res.info);
+        if (isTeacher) { enterTeacher(); return; }
+        if (TOKEN) { onDashboard(res.dash); return; }
+        showLoading(false);
+        showScreen('loginScreen');
       })
-      .withFailureHandler(err => { onError(err); showScreen('loginScreen'); })
-      .getLoginInfo();
+      .withFailureHandler(err => { onError(err); if (!document.querySelector('.screen.active')) showScreen('loginScreen'); })
+      .boot(TOKEN, !!isTeacher);
   });
+
+  const INFO_KEY = 'classk_info', DASH_KEY = 'classk_dash';
+  function readJSON(k) { try { return JSON.parse(store.get(k) || 'null'); } catch (e) { return null; } }
+  function writeJSON(k, v) { try { store.set(k, JSON.stringify(v)); } catch (e) {} }
+
+  function applyInfo(info) {
+    INFO = info;
+    $('loginTitle').textContent = info.appName;
+    $('loginSub').textContent = `${info.className} · 내 이름을 눌러요`;
+    document.title = `${info.appName} · ${info.className}`;
+    renderNames();
+  }
 
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
@@ -1364,7 +1390,7 @@
         store.set(STORE_KEY, TOKEN);
         closePin();
         if (res.master) toast(`👩‍🏫 선생님 권한으로 ${res.name} 화면에 들어왔어요`);
-        fetchDashboard(true);
+        if (res.dash) onDashboard(res.dash); else fetchDashboard(true);
       })
       .withFailureHandler(err => { pinBusy = false; onError(err); })
       .login(s.num, pin);
@@ -1376,6 +1402,7 @@
     DATA = null;
     store.del(STORE_KEY);
     store.del(ROLE_KEY);
+    store.del(DASH_KEY);
     MASTER = false;
     SCHOOL = null;
     if (TEACHER) {
@@ -1415,27 +1442,36 @@
   function fetchDashboard(withLoading) {
     if (withLoading) showLoading(true);
     google.script.run
-      .withSuccessHandler(res => {
-        showLoading(false);
-        if (!res || !res.ok) {
-          TOKEN = null;
-          store.del(STORE_KEY);
-          showScreen('loginScreen');
-          if (DATA) toast('다시 로그인해 주세요.');
-          DATA = null;
-          return;
-        }
-        DATA = res;
-        MASTER = !!res.master;
-        if (res.school) SCHOOL = res.school;
-        lastFetch = Date.now();
-        renderHome();
-        const active = document.querySelector('.screen.active');
-        if ($('detailScreen').classList.contains('active') && current) renderDetail();
-        else if (!active || active.id === 'loginScreen') showScreen('homeScreen');
-      })
+      .withSuccessHandler(onDashboard)
       .withFailureHandler(onError)
       .getDashboard(TOKEN);
+  }
+
+  /* 서버에서 받은 내 기록 → 화면 (다음에 빨리 열 수 있게 이 기기에 저장) */
+  function onDashboard(res) {
+    showLoading(false);
+    if (!res || !res.ok) {
+      TOKEN = null;
+      store.del(STORE_KEY);
+      store.del(DASH_KEY);
+      showScreen('loginScreen');
+      if (DATA) toast('다시 로그인해 주세요.');
+      DATA = null;
+      return;
+    }
+    writeJSON(DASH_KEY, res);
+    applyDashboard(res, false);
+  }
+
+  function applyDashboard(res, fromCache) {
+    DATA = res;
+    MASTER = !!res.master;
+    if (res.school && !fromCache) SCHOOL = res.school;
+    if (!fromCache) lastFetch = Date.now();
+    renderHome();
+    const active = document.querySelector('.screen.active');
+    if ($('detailScreen').classList.contains('active') && current) renderDetail();
+    else if (!active || active.id === 'loginScreen') showScreen('homeScreen');
   }
 
   function refresh() { fetchDashboard(true); }
@@ -3832,22 +3868,13 @@
     '독서왕':     { e: '📚', b: '#e07a1f', l: '#fdeedd' },
     '환경지킴이': { e: '🌱', b: '#2b8a4b', l: '#dff3e6' }
   };
-  /* 선생님이 직접 쓴 뱃지: 이름 글자로 그림을 고르고, 색은 이름마다 다르게 */
-  const CUSTOM_EMOJI = [
-    [['친절', '배려', '도움', '도와', '나눔'], '🤝'], [['노력', '끈기', '최선', '도전'], '💪'], [['웃음', '긍정', '행복', '밝은'], '😄'],
-    [['리더', '반장', '회장', '이끔', '대표'], '👑'], [['수학', '계산'], '🧮'], [['과학', '실험', '탐구'], '🔬'], [['발표', '말하기'], '🎤'],
-    [['음악', '노래', '악기', '리코더'], '🎵'], [['미술', '그림', '만들기'], '🎨'], [['운동', '체육', '달리기', '축구', '줄넘기'], '⚽'],
-    [['정리', '청소', '깔끔'], '🧹'], [['인사', '예절', '바른'], '🙇'], [['글', '일기', '작가'], '✍️'], [['코딩', '컴퓨터', '로봇'], '🤖'],
-    [['요리', '급식', '편식'], '🍚'], [['출석', '지각', '성실', '꾸준'], '⏰'], [['우정', '친구', '사이'], '💞'], [['아이디어', '창의', '발명'], '💡'],
-    [['안전', '지킴'], '🛡️'], [['영어'], '🔤'], [['사회', '역사', '지도'], '🗺️']
-  ];
+  /* 선생님이 직접 쓴 뱃지: 그림은 🌟로 같고, 색은 이름마다 다르게 */
   const CUSTOM_COLORS = [['#c9a000', '#fff4c2'], ['#d0567a', '#fde6ee'], ['#1d8a91', '#dff4f5'], ['#b8630a', '#fdeedd'],
     ['#6b4fc4', '#ece6fb'], ['#3b7d2a', '#e4f3dc'], ['#c43d3d', '#fde4e4'], ['#2f6fc4', '#e2edfb']];
   function badgeStyle(name) {
     if (BADGE_STYLE[name]) return BADGE_STYLE[name];
-    const hit = CUSTOM_EMOJI.find(([words]) => words.some(w => name.indexOf(w) >= 0));
     const col = CUSTOM_COLORS[hashStr(name) % CUSTOM_COLORS.length];
-    return { e: hit ? hit[1] : '🌟', b: col[0], l: col[1] };
+    return { e: '🌟', b: col[0], l: col[1] };
   }
   let HOF = null;            // 선생님 입력 화면 데이터
   let hofPick = { nums: [], badge: null, custom: false };
@@ -3934,7 +3961,7 @@
         ${hofPick.custom ? `<div style="display:flex;align-items:center;gap:12px;margin-top:12px">
           <div id="hfPreview">${medalHtml(customVal || '🌟', true)}</div>
           <input class="bk-input" id="hfBadgeName" maxlength="${H.badgeMax || 10}" placeholder="뱃지 이름 (예: 친절왕, 노력상)" value="${esc(customVal)}" oninput="onHofCustomInput()" style="margin:0">
-        </div><p class="updated" style="text-align:left;margin-top:6px">이름에 '친절', '노력', '수학' 같은 낱말이 있으면 그림이 바뀌어요</p>` : ''}
+        </div><p class="updated" style="text-align:left;margin-top:6px">직접 쓴 뱃지는 🌟 그림이고, 이름마다 색이 달라요</p>` : ''}
         <div class="ed-label">✏️ 내용 <span>학생에게 보여요</span></div>
         <textarea class="nt-text" id="hfText" maxlength="200" placeholder="예) 쉬는 시간에 새 놀이를 만들어 친구들과 함께했어요">${esc(prev ? prev.text : '')}</textarea>
         <div class="ed-label">🪙 야호 <span>0이면 뱃지만 줘요</span></div>
@@ -4109,11 +4136,11 @@
         <div class="stat"><span>🎯 정확도</span><b>${st.avgAcc}<small>%</small></b></div>
       </div>
       <div class="rule-card">
-        🪙 정확도 <b>${R.minAcc}% 이상</b>으로 아래 중 하나를 해내면 <b>${R.reward}야호</b> (하루 1번) ${td.rewarded ? '<b>· 오늘은 받았어요 ✓</b>' : ''}
+        🪙 정확도 <b>${R.minAcc}% 이상</b>으로 아래 중 하나를 채우면 <b>${R.reward}야호</b> (하루 1번) ${td.rewarded ? '<b>· 오늘은 받았어요 ✓</b>' : ''}
         <div class="tp-today">
           <div class="${td.shortDone >= R.shortNeed ? 'ok' : ''}">✏️ 짧은 글<b>${Math.min(td.shortDone, R.shortNeed)}/${R.shortNeed}</b></div>
-          <div class="${td.longDone ? 'ok' : ''}">📄 긴 글<b>${td.longDone ? '✓' : '0/1'}</b></div>
-          <div class="${td.challengeDone ? 'ok' : ''}">🏆 도전<b>${td.challengeDone ? '✓' : '0/1'}</b></div>
+          <div class="${td.longDone >= R.longNeed ? 'ok' : ''}">📄 긴 글<b>${Math.min(td.longDone, R.longNeed)}/${R.longNeed}</b></div>
+          <div class="${td.challengeDone >= R.challengeNeed ? 'ok' : ''}">🏆 도전<b>${Math.min(td.challengeDone, R.challengeNeed)}/${R.challengeNeed}</b></div>
         </div>
       </div>
       <div class="tp-modes">
@@ -4168,9 +4195,10 @@
     const third = TP.kind === '도전' ? `<div><span>남은 시간</span><b id="tpThird">${R.challengeSec}</b></div>`
       : TP.kind === '짧은글' ? `<div><span>오늘 짧은 글</span><b id="tpThird">${Math.min(td.shortDone, R.shortNeed)}/${R.shortNeed}</b></div>`
       : `<div><span>진행</span><b id="tpThird">0%</b></div>`;
+    const need = TP.kind === '긴글' ? `오늘 긴 글 ${Math.min(td.longDone, R.longNeed)}/${R.longNeed}` : TP.kind === '도전' ? `오늘 도전 ${Math.min(td.challengeDone, R.challengeNeed)}/${R.challengeNeed}` : '';
     $('tpBody').innerHTML = `
       <div class="tp-bar"><div><span>타수</span><b id="tpCpm">0</b></div><div><span>정확도</span><b id="tpAcc">100</b></div>${third}</div>
-      <div class="tp-last" id="tpLast">${TP.lastMsg || (TP.kind === '도전' ? '첫 글자를 치면 1분이 시작돼요!' : '위의 글을 아래 칸에 똑같이 따라 쳐요')}</div>
+      <div class="tp-last" id="tpLast">${TP.lastMsg || (TP.kind === '도전' ? '첫 글자를 치면 1분이 시작돼요!' : '위의 글을 아래 칸에 똑같이 따라 쳐요') + (need && !td.rewarded ? ` · ${need}` : '')}</div>
       <div class="tp-target ${TP.kind === '짧은글' ? 'short' : ''}" id="tpTarget"></div>
       <textarea class="tp-input" id="tpInput" rows="${TP.kind === '짧은글' ? 1 : 3}" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="여기에 쳐요"></textarea>
       <div class="tp-tip">${TP.kind === '도전' ? '끝까지 치면 다음 글이 이어서 나와요 · 붙여넣기는 안 돼요' : '틀린 글자는 ⌫로 고칠 수 있어요 · 마지막 글자까지 치면 끝나요'}</div>
@@ -4294,7 +4322,10 @@
     const R = TYPE.rules, td = TYPE.today;
     let msg = '', cls = '';
     if (r.yaho) { msg = `🪙 오늘의 타자 야호 +${r.yaho}!`; cls = 'got'; }
-    else if (r.note) msg = r.note.indexOf('짧은 글') === 0 ? `✏️ ${r.note} · ${R.shortNeed - td.shortDone}문장 더 치면 야호!` : r.note;
+    else if (r.note) {
+      const left = r.kind === '짧은글' ? R.shortNeed - td.shortDone : r.kind === '긴글' ? R.longNeed - td.longDone : R.challengeNeed - td.challengeDone;
+      msg = /\d+\/\d+$/.test(r.note) ? `${r.note} · ${left}번 더 하면 야호!` : r.note;
+    }
     if (r.kind === '짧은글') {
       // 짧은 글: 결과를 한 줄로 보여 주고 바로 다음 문장
       const prevText = TP ? TP.text : '';
